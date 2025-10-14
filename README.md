@@ -1,4 +1,4 @@
-# nova-tv
+<h1 align="center">nova-tv</h1>
 
 <div align="center">
   <img src="public/logo.png" alt="nova-tv Logo" width="120">
