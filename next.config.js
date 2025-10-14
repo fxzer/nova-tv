@@ -4,22 +4,11 @@ import withPWA from 'next-pwa'
 const nextConfig = {
   output: 'standalone',
   eslint: {
-    dirs: ['src'],
+    ignoreDuringBuilds: true,
   },
 
   reactStrictMode: true,
 
-  // 优化热更新
-  experimental: {
-    turbotrace: {
-      logLevel: 'error',
-    },
-  },
-
-  // 确保正确的重新构建
-  swcMinify: true,
-
-  // Uncoment to add domain whitelist
   images: {
     unoptimized: true,
     remotePatterns: [

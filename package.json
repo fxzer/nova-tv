@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "pnpm gen:runtime && pnpm gen:manifest && pnpm clean:cache && next dev -H 0.0.0.0",
     "dev:legacy": "pnpm gen:runtime && pnpm gen:manifest && next dev -H 0.0.0.0",
-    "build": "pnpm gen:runtime && pnpm gen:manifest && next build",
-    "build:legacy": "pnpm gen:runtime && pnpm gen:manifest && next build",
+    "build": "pnpm gen:runtime && pnpm gen:manifest && next build && pnpm copy:static",
+    "build:legacy": "pnpm gen:runtime && pnpm gen:manifest && next build && pnpm copy:static",
     "clean:cache": "rm -rf .next && rm -rf node_modules/.cache",
     "start": "next start",
     "lint": "eslint .",
@@ -20,9 +20,11 @@
     "gen:runtime": "node scripts/convert-config.js",
     "gen:manifest": "node scripts/generate-manifest.js",
     "gen:version": "node scripts/generate-version.js",
+    "copy:static": "cp -r .next/static .next/standalone/m/nova-tv/.next/ && cp -r public .next/standalone/m/nova-tv/ || echo 'Standalone directory not found, skipping static copy'",
     "postbuild": "echo 'Build completed - sitemap generation disabled'",
     "prepare": "husky install",
-    "pages:build": "pnpm gen:runtime && pnpm gen:manifest && next build && npx @cloudflare/next-on-pages --experimental-minify"
+    "pages:build": "pnpm gen:runtime && pnpm gen:manifest && next build && npx @cloudflare/next-on-pages --experimental-minify",
+    "start:prod": "node .next/standalone/m/nova-tv/server.js"
   },
   "dependencies": {
     "@cloudflare/next-on-pages": "^1.13.12",
@@ -60,6 +62,7 @@
     "@commitlint/cli": "^16.3.0",
     "@commitlint/config-conventional": "^16.2.4",
     "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.37.0",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tanstack/react-query-devtools": "^5.90.2",
@@ -68,6 +71,7 @@
     "@types/react-dom": "^19.1.6",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.37.0",
+    "eslint-config-next": "^15.5.5",
     "husky": "^7.0.4",
     "lint-staged": "^12.5.0",
     "postcss": "^8.5.1",

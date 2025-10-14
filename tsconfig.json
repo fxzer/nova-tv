@@ -5,8 +5,8 @@
     "jsx": "preserve",
     "lib": ["dom", "dom.iterable", "esnext"],
     "baseUrl": ".",
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"],
       "~/*": ["./public/*"]
@@ -26,6 +26,5 @@
     ]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"],
-  "moduleResolution": ["node_modules", ".next", "node"]
+  "exclude": ["node_modules"]
 }
