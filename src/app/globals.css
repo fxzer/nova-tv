@@ -1,0 +1,472 @@
+@import 'tailwindcss';
+
+@source '../../**/*.{js,ts,jsx,tsx}';
+@source '../components/**/*.{js,ts,jsx,tsx}';
+@source '../app/**/*.{js,ts,jsx,tsx}';
+
+@theme {
+  --animate-shimmer: shimmer 1.3s linear infinite;
+}
+
+/* 配置暗黑模式使用 class 选择器 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+}
+
+:root {
+  --foreground-rgb: 31, 41, 55;
+}
+
+html.dark {
+  --foreground-rgb: 255, 255, 255;
+}
+
+html,
+body {
+  height: 100%;
+  overflow-x: hidden;
+  /* 阻止 iOS Safari 拉动回弹 */
+  overscroll-behavior: none;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+}
+
+html:not(.dark) body {
+  background: linear-gradient(180deg, #e6f3fb 0%, #eaf3f7 18%, #f7f7f3 38%, #e9ecef 60%, #dbe3ea 80%, #d3dde6 100%);
+  background-attachment: fixed;
+}
+
+html.dark body {
+  background: #000;
+  background-attachment: fixed;
+}
+
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.5);
+}
+
+/* 隐藏移动端（<768px）垂直滚动条 */
+@media (max-width: 767px) {
+  html,
+  body {
+    -ms-overflow-style: none; /* IE & Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+}
+
+/* 隐藏所有滚动条（兼容 WebKit、Firefox、IE/Edge） */
+* {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* View Transitions API 动画 */
+@keyframes slide-from-top {
+  from {
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+  }
+  to {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+@keyframes slide-from-bottom {
+  from {
+    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+  }
+  to {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.8s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+/*
+  切换时，旧的视图不应该有动画，它应该在下面，等待被新的视图覆盖。
+  这可以防止在动画完成前，页面底部提前变色。
+*/
+::view-transition-old(root) {
+  animation: none;
+}
+
+/* 从浅色到深色：新内容（深色）从顶部滑入 */
+html.dark::view-transition-new(root) {
+  animation-name: slide-from-top;
+}
+
+/* 从深色到浅色：新内容（浅色）从底部滑入 */
+html:not(.dark)::view-transition-new(root) {
+  animation-name: slide-from-bottom;
+}
+
+/* 强制播放器内部的 video 元素高度为 100%，并保持内容完整显示 */
+div[data-media-provider] video {
+  height: 100%;
+  object-fit: contain;
+}
+
+.art-poster {
+  background-size: contain !important; /* 使图片完整展示 */
+  background-position: center center !important; /* 居中显示 */
+  background-repeat: no-repeat !important; /* 防止重复 */
+  background-color: #000 !important; /* 其余区域填充为黑色 */
+}
+
+/* 隐藏移动端竖屏时的 pip 按钮 */
+@media (max-width: 768px) {
+  .art-control-pip {
+    display: none !important;
+  }
+
+  .art-control-fullscreenWeb {
+    display: none !important;
+  }
+
+  .art-control-volume {
+    display: none !important;
+  }
+}
+
+/* 视频加载动画 */
+.dot-spinner {
+  --uib-size: 2.8rem;
+  --uib-speed: 0.9s;
+  --uib-color: #fff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: var(--uib-size);
+  width: var(--uib-size);
+}
+
+.dot-spinner__dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+}
+
+.dot-spinner__dot::before {
+  content: '';
+  height: 20%;
+  width: 20%;
+  border-radius: 50%;
+  background-color: var(--uib-color);
+  transform: scale(0);
+  opacity: 0.5;
+  animation: pulse0112 calc(var(--uib-speed) * 1.111) ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(18, 31, 53, 0.3);
+}
+
+/* 8个点按顺序循环使用四种颜色，确保相邻颜色不同 */
+.dot-spinner__dot:nth-child(1)::before {
+  background-color: #f75f57; /* 红色 */
+}
+
+.dot-spinner__dot:nth-child(2)::before {
+  background-color: #f8bc2e; /* 黄色 */
+}
+
+.dot-spinner__dot:nth-child(3)::before {
+  background-color: #29c841; /* 绿色 */
+}
+
+.dot-spinner__dot:nth-child(4)::before {
+  background-color: #429aff; /* 蓝色 */
+}
+
+.dot-spinner__dot:nth-child(5)::before {
+  background-color: #f75f57; /* 红色 */
+}
+
+.dot-spinner__dot:nth-child(6)::before {
+  background-color: #f8bc2e; /* 黄色 */
+}
+
+.dot-spinner__dot:nth-child(7)::before {
+  background-color: #29c841; /* 绿色 */
+}
+
+.dot-spinner__dot:nth-child(8)::before {
+  background-color: #429aff; /* 蓝色 */
+}
+
+.dot-spinner__dot:nth-child(2) {
+  transform: rotate(45deg);
+}
+
+.dot-spinner__dot:nth-child(2)::before {
+  animation-delay: calc(var(--uib-speed) * -0.875);
+}
+
+.dot-spinner__dot:nth-child(3) {
+  transform: rotate(90deg);
+}
+
+.dot-spinner__dot:nth-child(3)::before {
+  animation-delay: calc(var(--uib-speed) * -0.75);
+}
+
+.dot-spinner__dot:nth-child(4) {
+  transform: rotate(135deg);
+}
+
+.dot-spinner__dot:nth-child(4)::before {
+  animation-delay: calc(var(--uib-speed) * -0.625);
+}
+
+.dot-spinner__dot:nth-child(5) {
+  transform: rotate(180deg);
+}
+
+.dot-spinner__dot:nth-child(5)::before {
+  animation-delay: calc(var(--uib-speed) * -0.5);
+}
+
+.dot-spinner__dot:nth-child(6) {
+  transform: rotate(225deg);
+}
+
+.dot-spinner__dot:nth-child(6)::before {
+  animation-delay: calc(var(--uib-speed) * -0.375);
+}
+
+.dot-spinner__dot:nth-child(7) {
+  transform: rotate(270deg);
+}
+
+.dot-spinner__dot:nth-child(7)::before {
+  animation-delay: calc(var(--uib-speed) * -0.25);
+}
+
+.dot-spinner__dot:nth-child(8) {
+  transform: rotate(315deg);
+}
+
+.dot-spinner__dot:nth-child(8)::before {
+  animation-delay: calc(var(--uib-speed) * -0.125);
+}
+
+@keyframes pulse0112 {
+  0%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 浮动粒子动画 */
+@keyframes float-up {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateY(-15px) translateX(8px);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-8px) translateX(-5px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-20px) translateX(3px);
+    opacity: 0.6;
+  }
+}
+
+@keyframes float-down {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateY(12px) translateX(-6px);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(8px) translateX(4px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(15px) translateX(-8px);
+    opacity: 0.5;
+  }
+}
+
+@keyframes float-circle {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateY(-10px) translateX(10px);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(8px) translateX(-8px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(12px) translateX(6px);
+    opacity: 0.6;
+  }
+}
+
+.animate-float-up {
+  animation: float-up 3s ease-in-out infinite;
+}
+
+.animate-float-down {
+  animation: float-down 2.5s ease-in-out infinite;
+}
+
+.animate-float-circle {
+  animation: float-circle 3.5s ease-in-out infinite;
+}
+
+/* 序号样式 */
+.rank-list .rank-item .content .img .num {
+  position: absolute;
+  top: 0;
+  left: 0;
+  line-height: 30px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.num {
+  position: relative;
+  display: inline-block;
+}
+
+.rank-icon {
+  display: block;
+}
+
+/* 前三个序号的渐变颜色 */
+.num.num-1 .rank-icon .start {
+  stop-color: #ff4757;
+}
+
+.num.num-1 .rank-icon .end {
+  stop-color: #ff6b81;
+}
+
+.num.num-2 .rank-icon .start {
+  stop-color: #ff9f43;
+}
+
+.num.num-2 .rank-icon .end {
+  stop-color: #ffb142;
+}
+
+.num.num-3 .rank-icon .start {
+  stop-color: #54a0ff;
+}
+
+.num.num-3 .rank-icon .end {
+  stop-color: #5f9fd8;
+}
+
+/* 第四名及以后的半透明灰色渐变 */
+.num:not(.num-1):not(.num-2):not(.num-3) .rank-icon .start {
+  stop-color: #9ea9b8b5;
+}
+
+.num:not(.num-1):not(.num-2):not(.num-3) .rank-icon .end {
+  stop-color: #ccd5dfb0;
+}
+
+/* 流光文字效果 */
+.shimmer-text {
+  color: transparent;
+
+  background: linear-gradient(
+    to right,
+    #4f4f4f 20%,
+    /* 流光左侧的基色 */ #ffffff 50%,
+    /* 流光的中心亮色 */ #4f4f4f 80% /* 流光右侧的基色 */
+  );
+
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  /* 应用动画 */
+  animation: shimmer 3s linear infinite;
+}
+
+/* 深色模式下的流光效果 */
+.dark .shimmer-text {
+  background: linear-gradient(to right, #6b7280 20%, #e5e7eb 50%, #6b7280 80%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* 定义动画关键帧 */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
