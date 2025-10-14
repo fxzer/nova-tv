@@ -153,11 +153,11 @@ nova-tv 在原版 MoonTV 基础上进行了全面优化和增强，主要包括�
 
 ```bash
 # 拉取预构建镜像
-docker pull ghcr.io/fxzer/moontv:latest
+docker pull ghcr.io/fxzer/nova-tv:latest
 
 # 运行容器
 # -d: 后台运行  -p: 映射端口 3000 -> 3000
-docker run -d --name moontv -p 3000:3000 --env PASSWORD=your_password ghcr.io/fxzer/moontv:latest
+docker run -d --name nova-tv -p 3000:3000 --env PASSWORD=your_password ghcr.io/fxzer/nova-tv:latest
 ```
 
 访问 `http://服务器 IP:3000` 即可。（需自行到服务器控制台放通 `3000` 端口）
@@ -170,9 +170,9 @@ docker run -d --name moontv -p 3000:3000 --env PASSWORD=your_password ghcr.io/fx
 
 ```yaml
 services:
-  moontv:
-    image: ghcr.io/fxzer/moontv:latest
-    container_name: moontv
+  nova-tv:
+    image: ghcr.io/fxzer/nova-tv:latest
+    container_name: nova-tv
     restart: unless-stopped
     ports:
       - '3000:3000'
@@ -187,9 +187,9 @@ services:
 
 ```yaml
 services:
-  moontv-core:
-    image: ghcr.io/fxzer/moontv:latest
-    container_name: moontv
+  nova-tv-core:
+    image: ghcr.io/fxzer/nova-tv:latest
+    container_name: nova-tv
     restart: unless-stopped
     ports:
       - '3000:3000'
@@ -197,26 +197,26 @@ services:
       - USERNAME=admin
       - PASSWORD=admin_password
       - NEXT_PUBLIC_STORAGE_TYPE=redis
-      - REDIS_URL=redis://moontv-redis:6379
+      - REDIS_URL=redis://nova-tv-redis:6379
       - NEXT_PUBLIC_ENABLE_REGISTER=true
     networks:
-      - moontv-network
+      - nova-tv-network
     depends_on:
-      - moontv-redis
+      - nova-tv-redis
     # 如需自定义配置，可挂载文件
     # volumes:
     #   - ./config.json:/app/config.json:ro
-  moontv-redis:
+  nova-tv-redis:
     image: redis
-    container_name: moontv-redis
+    container_name: nova-tv-redis
     restart: unless-stopped
     networks:
-      - moontv-network
+      - nova-tv-network
     # 如需持久化
     # volumes:
     #   - ./data:/data
 networks:
-  moontv-network:
+  nova-tv-network:
     driver: bridge
 ```
 
