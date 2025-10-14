@@ -102,7 +102,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeView }) => {
             key={item.label}
             onClick={() => handleNavigation(item.view)}
             data-active={isActive}
-            className={`group flex items-center rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-400/10 hover:text-gray-600 data-[active=true]:bg-green-500/20 data-[active=true]:text-green-700 transition-colors duration-200 dark:text-gray-300 dark:hover:text-gray-100 dark:data-[active=true]:bg-green-500/20 dark:data-[active=true]:text-green-400 `}
+            className={'group flex items-center rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-400/10 hover:text-gray-600 data-[active=true]:bg-green-500/20 data-[active=true]:text-green-700 transition-colors duration-200 dark:text-gray-300 dark:hover:text-gray-100 dark:data-[active=true]:bg-green-500/20 dark:data-[active=true]:text-green-400 '}
           >
             <Icon className="h-4 w-4 dark:group-hover:text-gray-100 data-[active=true]:text-green-700 dark:data-[active=true]:text-green-400" />
             <span className="ml-2">{item.label}</span>

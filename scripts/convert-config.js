@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable */
+ 
 // AUTO-GENERATED SCRIPT: Converts config.json to TypeScript definition.
 // Usage: node scripts/convert-config.js
 

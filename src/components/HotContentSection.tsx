@@ -40,38 +40,38 @@ export default function HotContentSection({
       </div>
       {loading
         ? (
+          <VideoGridContainer>
+            {Array.from({ length: 18 }, (_, index) => (
+              <VideoSkeleton key={index} />
+            ))}
+          </VideoGridContainer>
+        )
+        : items.length > 0
+          ? (
             <VideoGridContainer>
-              {Array.from({ length: 18 }, (_, index) => (
-                <VideoSkeleton key={index} />
+              {items.slice(0, 18).map((item, index) => (
+                <div key={`${item.title}-${index}`} className="w-full">
+                  <VideoCard
+                    from="douban"
+                    title={item.title}
+                    poster={item.poster}
+                    douban_id={item.id}
+                    rate={item.rate}
+                    year={item.year}
+                    type={viewType === 'movie' ? 'movie' : ''}
+                    showRank={true}
+                    rankNumber={index + 1}
+                    showSource={false}
+                    showEpisodes={false}
+                    showYear={false}
+                  />
+                </div>
               ))}
             </VideoGridContainer>
           )
-        : items.length > 0
-          ? (
-              <VideoGridContainer>
-                {items.slice(0, 18).map((item, index) => (
-                  <div key={`${item.title}-${index}`} className="w-full">
-                    <VideoCard
-                      from="douban"
-                      title={item.title}
-                      poster={item.poster}
-                      douban_id={item.id}
-                      rate={item.rate}
-                      year={item.year}
-                      type={viewType === 'movie' ? 'movie' : ''}
-                      showRank={true}
-                      rankNumber={index + 1}
-                      showSource={false}
-                      showEpisodes={false}
-                      showYear={false}
-                    />
-                  </div>
-                ))}
-              </VideoGridContainer>
-            )
           : (
-              <Empty />
-            )}
+            <Empty />
+          )}
     </section>
   )
 }

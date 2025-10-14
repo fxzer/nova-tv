@@ -140,38 +140,38 @@ export default function WatchHistoryModal({
               <VideoGridContainer>
                 {loading
                   ? // 加载状态显示灰色占位数据
-                    Array.from({ length: 18 }, (_, index) => (
-                      <VideoSkeleton key={index} />
-                    ))
+                  Array.from({ length: 18 }, (_, index) => (
+                    <VideoSkeleton key={index} />
+                  ))
                   : // 显示真实数据
-                    playRecords.map((record) => {
-                      const { source, id } = parseKey(record.key)
-                      return (
-                        <div
-                          key={`${record.title}-${record.key}`}
-                          className="w-full"
-                        >
-                          <VideoCard
-                            id={id}
-                            title={record.title}
-                            poster={record.cover}
-                            year={record.year}
-                            source={source}
-                            source_name={record.source_name}
-                            progress={getProgress(record)}
-                            episodes={record.total_episodes}
-                            currentEpisode={record.index}
-                            query={record.search_title}
-                            from="playrecord"
-                            onDelete={() =>
-                              setPlayRecords(prev =>
-                                prev.filter(r => r.key !== record.key),
-                              )}
-                            type={record.total_episodes > 1 ? 'tv' : ''}
-                          />
-                        </div>
-                      )
-                    })}
+                  playRecords.map((record) => {
+                    const { source, id } = parseKey(record.key)
+                    return (
+                      <div
+                        key={`${record.title}-${record.key}`}
+                        className="w-full"
+                      >
+                        <VideoCard
+                          id={id}
+                          title={record.title}
+                          poster={record.cover}
+                          year={record.year}
+                          source={source}
+                          source_name={record.source_name}
+                          progress={getProgress(record)}
+                          episodes={record.total_episodes}
+                          currentEpisode={record.index}
+                          query={record.search_title}
+                          from="playrecord"
+                          onDelete={() =>
+                            setPlayRecords(prev =>
+                              prev.filter(r => r.key !== record.key),
+                            )}
+                          type={record.total_episodes > 1 ? 'tv' : ''}
+                        />
+                      </div>
+                    )
+                  })}
               </VideoGridContainer>
             )}
           </div>

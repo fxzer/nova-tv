@@ -594,22 +594,22 @@ function UserConfig({ config, role, refreshConfig }: UserConfigProps) {
                               {user.role !== 'owner'
                                 && (!user.banned
                                   ? (
-                                      <button
-                                        onClick={() => handleBanUser(user.username)}
-                                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:hover:bg-red-900/60 dark:text-red-300 transition-colors"
-                                      >
-                                        封禁
-                                      </button>
-                                    )
+                                    <button
+                                      onClick={() => handleBanUser(user.username)}
+                                      className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:hover:bg-red-900/60 dark:text-red-300 transition-colors"
+                                    >
+                                      封禁
+                                    </button>
+                                  )
                                   : (
-                                      <button
-                                        onClick={() =>
-                                          handleUnbanUser(user.username)}
-                                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/40 dark:hover:bg-green-900/60 dark:text-green-300 transition-colors"
-                                      >
-                                        解封
-                                      </button>
-                                    ))}
+                                    <button
+                                      onClick={() =>
+                                        handleUnbanUser(user.username)}
+                                      className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/40 dark:hover:bg-green-900/60 dark:text-green-300 transition-colors"
+                                    >
+                                      解封
+                                    </button>
+                                  ))}
                             </>
                           )}
                           {/* 删除用户按钮 - 放在最后，使用更明显的红色样式 */}
@@ -1187,8 +1187,8 @@ function CategoryConfig({
               isD1Storage || isUpstashStorage
                 ? 'bg-gray-400 cursor-not-allowed text-white'
                 : !category.disabled
-                    ? 'bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
-                    : 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
+                  ? 'bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
+                  : 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
             } transition-colors`}
           >
             {!category.disabled ? '禁用' : '启用'}
@@ -1704,7 +1704,7 @@ function AdminPageClient() {
         setLoading(true)
       }
 
-      const response = await fetch(`/api/admin/config`)
+      const response = await fetch('/api/admin/config')
 
       if (!response.ok) {
         const data = (await response.json()) as any
@@ -1754,7 +1754,7 @@ function AdminPageClient() {
       return
 
     try {
-      const response = await fetch(`/api/admin/reset`)
+      const response = await fetch('/api/admin/reset')
       if (!response.ok) {
         throw new Error(`重置失败: ${response.status}`)
       }

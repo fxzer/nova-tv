@@ -350,9 +350,9 @@ function SearchPageClient() {
                   viewMode === 'agg'
                     ? aggregatedResults
                     : groupedResults.map(([typeName, items]) => ({
-                        typeName,
-                        items,
-                      }))
+                      typeName,
+                      items,
+                    }))
                 }
                 selectedGroup={selectedGroup}
                 onGroupSelect={setSelectedGroup}
@@ -363,50 +363,50 @@ function SearchPageClient() {
               <VideoGridContainer>
                 {viewMode === 'agg'
                   ? aggregatedResults
-                      .filter(({ typeName }) => typeName === selectedGroup)
-                      .flatMap(({ groups }) =>
-                        groups.map(([mapKey, group]) => (
-                          <div key={mapKey} className="w-full">
-                            <VideoCard
-                              from="search"
-                              items={group}
-                              query={
-                                group[0].title !== searchParams.get('q')?.trim()
-                                  ? searchParams.get('q')?.trim() || ''
-                                  : ''
-                              }
-                            />
-                          </div>
-                        )),
-                      )
+                    .filter(({ typeName }) => typeName === selectedGroup)
+                    .flatMap(({ groups }) =>
+                      groups.map(([mapKey, group]) => (
+                        <div key={mapKey} className="w-full">
+                          <VideoCard
+                            from="search"
+                            items={group}
+                            query={
+                              group[0].title !== searchParams.get('q')?.trim()
+                                ? searchParams.get('q')?.trim() || ''
+                                : ''
+                            }
+                          />
+                        </div>
+                      )),
+                    )
                   : groupedResults
-                      .filter(([typeName]) => typeName === selectedGroup)
-                      .flatMap(([typeName, items]) =>
-                        items.map(item => (
-                          <div
-                            key={`${typeName}-${item.source}-${item.id}`}
-                            className="w-full"
-                          >
-                            <VideoCard
-                              id={item.id}
-                              title={`${item.title} ${item.type_name}`}
-                              poster={item.poster}
-                              episodes={item.episodes.length}
-                              source={item.source}
-                              source_name={item.source_name}
-                              douban_id={item.douban_id?.toString()}
-                              query={
-                                item.title !== searchParams.get('q')?.trim()
-                                  ? searchParams.get('q')?.trim() || ''
-                                  : ''
-                              }
-                              year={item.year}
-                              from="search"
-                              type={item.episodes.length > 1 ? 'tv' : 'movie'}
-                            />
-                          </div>
-                        )),
-                      )}
+                    .filter(([typeName]) => typeName === selectedGroup)
+                    .flatMap(([typeName, items]) =>
+                      items.map(item => (
+                        <div
+                          key={`${typeName}-${item.source}-${item.id}`}
+                          className="w-full"
+                        >
+                          <VideoCard
+                            id={item.id}
+                            title={`${item.title} ${item.type_name}`}
+                            poster={item.poster}
+                            episodes={item.episodes.length}
+                            source={item.source}
+                            source_name={item.source_name}
+                            douban_id={item.douban_id?.toString()}
+                            query={
+                              item.title !== searchParams.get('q')?.trim()
+                                ? searchParams.get('q')?.trim() || ''
+                                : ''
+                            }
+                            year={item.year}
+                            from="search"
+                            type={item.episodes.length > 1 ? 'tv' : 'movie'}
+                          />
+                        </div>
+                      )),
+                    )}
               </VideoGridContainer>
 
               {searchResults.length === 0 && <Empty />}

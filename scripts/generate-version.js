@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable */
+ 
 
 import fs from 'fs';
 import path from 'path';

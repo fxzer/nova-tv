@@ -144,31 +144,31 @@ export default function CollectionModal({
           <div className="flex-1 overflow-y-auto min-h-0 pr-2">
             {favoriteItems.length === 0
               ? (
-                  <Empty />
-                )
+                <Empty />
+              )
               : (
-                  <VideoGridContainer>
-                    {favoriteItems.map(item => (
-                      <div
-                        key={`${item.title}-${item.id}-${item.source}`}
-                        className="w-full"
-                      >
-                        <VideoCard
-                          query={item.search_title}
-                          id={item.id}
-                          source={item.source}
-                          title={item.title}
-                          poster={item.poster}
-                          episodes={item.episodes}
-                          source_name={item.source_name}
-                          year={item.year?.toString()}
-                          from="favorite"
-                          type={item.episodes > 1 ? 'tv' : ''}
-                        />
-                      </div>
-                    ))}
-                  </VideoGridContainer>
-                )}
+                <VideoGridContainer>
+                  {favoriteItems.map(item => (
+                    <div
+                      key={`${item.title}-${item.id}-${item.source}`}
+                      className="w-full"
+                    >
+                      <VideoCard
+                        query={item.search_title}
+                        id={item.id}
+                        source={item.source}
+                        title={item.title}
+                        poster={item.poster}
+                        episodes={item.episodes}
+                        source_name={item.source_name}
+                        year={item.year?.toString()}
+                        from="favorite"
+                        type={item.episodes > 1 ? 'tv' : ''}
+                      />
+                    </div>
+                  ))}
+                </VideoGridContainer>
+              )}
           </div>
         </div>
       </div>

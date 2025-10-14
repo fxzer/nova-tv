@@ -72,23 +72,23 @@ function DoubanContent({
         {/* 选择器组件 */}
         {type !== 'custom'
           ? (
-              <Selector
-                type={type as 'movie' | 'tv' | 'show'}
-                primarySelection={primarySelection}
-                secondarySelection={secondarySelection}
-                onPrimaryChange={onPrimaryChange}
-                onSecondaryChange={onSecondaryChange}
-              />
-            )
+            <Selector
+              type={type as 'movie' | 'tv' | 'show'}
+              primarySelection={primarySelection}
+              secondarySelection={secondarySelection}
+              onPrimaryChange={onPrimaryChange}
+              onSecondaryChange={onSecondaryChange}
+            />
+          )
           : (
-              <CustomSelector
-                customCategories={customCategories}
-                primarySelection={primarySelection}
-                secondarySelection={secondarySelection}
-                onPrimaryChange={onPrimaryChange}
-                onSecondaryChange={onSecondaryChange}
-              />
-            )}
+            <CustomSelector
+              customCategories={customCategories}
+              primarySelection={primarySelection}
+              secondarySelection={secondarySelection}
+              onPrimaryChange={onPrimaryChange}
+              onSecondaryChange={onSecondaryChange}
+            />
+          )}
       </div>
 
       {/* 内容展示区域 */}
@@ -97,21 +97,21 @@ function DoubanContent({
         <VideoGridContainer>
           {loading
             ? // 显示骨架屏
-              skeletonData.map(index => <VideoSkeleton key={index} />)
+            skeletonData.map(index => <VideoSkeleton key={index} />)
             : // 显示实际数据
-              doubanData.map((item, index) => (
-                <div key={`${item.title}-${index}`} className="w-full">
-                  <VideoCard
-                    from="douban"
-                    title={item.title}
-                    poster={item.poster}
-                    douban_id={item.id}
-                    rate={item.rate}
-                    year={item.year}
-                    type={type === 'movie' ? 'movie' : ''} // 电影类型严格控制，tv 不控
-                  />
-                </div>
-              ))}
+            doubanData.map((item, index) => (
+              <div key={`${item.title}-${index}`} className="w-full">
+                <VideoCard
+                  from="douban"
+                  title={item.title}
+                  poster={item.poster}
+                  douban_id={item.id}
+                  rate={item.rate}
+                  year={item.year}
+                  type={type === 'movie' ? 'movie' : ''} // 电影类型严格控制，tv 不控
+                />
+              </div>
+            ))}
         </VideoGridContainer>
 
         {/* 加载更多指示器 */}
@@ -524,24 +524,24 @@ function PageView() {
           <div className="max-w-[95%] mx-auto">
             {currentView === 'hot'
               ? (
-                  <HotContent />
-                )
+                <HotContent />
+              )
               : (
-                  <DoubanContent
-                    type={currentView}
-                    customCategories={customCategories}
-                    primarySelection={primarySelection}
-                    secondarySelection={secondarySelection}
-                    doubanData={doubanData}
-                    loading={doubanLoading}
-                    hasMore={hasMore}
-                    isLoadingMore={isLoadingMore}
-                    skeletonData={skeletonData}
-                    onPrimaryChange={handlePrimaryChange}
-                    onSecondaryChange={handleSecondaryChange}
-                    loadingRef={loadingRef}
-                  />
-                )}
+                <DoubanContent
+                  type={currentView}
+                  customCategories={customCategories}
+                  primarySelection={primarySelection}
+                  secondarySelection={secondarySelection}
+                  doubanData={doubanData}
+                  loading={doubanLoading}
+                  hasMore={hasMore}
+                  isLoadingMore={isLoadingMore}
+                  skeletonData={skeletonData}
+                  onPrimaryChange={handlePrimaryChange}
+                  onSecondaryChange={handleSecondaryChange}
+                  loadingRef={loadingRef}
+                />
+              )}
           </div>
         </div>
       </PageLayout>

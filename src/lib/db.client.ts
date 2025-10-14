@@ -373,7 +373,7 @@ async function handleDatabaseOperationFailure(
   error: any,
 ): Promise<void> {
   console.error(`数据库操作失败 (${dataType}):`, error)
-  triggerGlobalError(`数据库操作失败`)
+  triggerGlobalError('数据库操作失败')
 
   try {
     let freshData: any
@@ -382,18 +382,18 @@ async function handleDatabaseOperationFailure(
     switch (dataType) {
       case 'playRecords':
         freshData
-          = await fetchFromApi<Record<string, PlayRecord>>(`/api/playrecords`)
+          = await fetchFromApi<Record<string, PlayRecord>>('/api/playrecords')
         cacheManager.cachePlayRecords(freshData)
         eventName = 'playRecordsUpdated'
         break
       case 'favorites':
         freshData
-          = await fetchFromApi<Record<string, Favorite>>(`/api/favorites`)
+          = await fetchFromApi<Record<string, Favorite>>('/api/favorites')
         cacheManager.cacheFavorites(freshData)
         eventName = 'favoritesUpdated'
         break
       case 'searchHistory':
-        freshData = await fetchFromApi<string[]>(`/api/searchhistory`)
+        freshData = await fetchFromApi<string[]>('/api/searchhistory')
         cacheManager.cacheSearchHistory(freshData)
         eventName = 'searchHistoryUpdated'
         break
@@ -471,7 +471,7 @@ export async function getAllPlayRecords(): Promise<Record<string, PlayRecord>> {
 
     if (cachedData) {
       // 返回缓存数据，同时后台异步更新
-      fetchFromApi<Record<string, PlayRecord>>(`/api/playrecords`)
+      fetchFromApi<Record<string, PlayRecord>>('/api/playrecords')
         .then((freshData) => {
           // 只有数据真正不同时才更新缓存
           if (JSON.stringify(cachedData) !== JSON.stringify(freshData)) {
@@ -495,7 +495,7 @@ export async function getAllPlayRecords(): Promise<Record<string, PlayRecord>> {
       // 缓存为空，直接从 API 获取并缓存
       try {
         const freshData
-          = await fetchFromApi<Record<string, PlayRecord>>(`/api/playrecords`)
+          = await fetchFromApi<Record<string, PlayRecord>>('/api/playrecords')
         cacheManager.cachePlayRecords(freshData)
         return freshData
       }
@@ -667,7 +667,7 @@ export async function getSearchHistory(): Promise<string[]> {
 
     if (cachedData) {
       // 返回缓存数据，同时后台异步更新
-      fetchFromApi<string[]>(`/api/searchhistory`)
+      fetchFromApi<string[]>('/api/searchhistory')
         .then((freshData) => {
           // 只有数据真正不同时才更新缓存
           if (JSON.stringify(cachedData) !== JSON.stringify(freshData)) {
@@ -690,7 +690,7 @@ export async function getSearchHistory(): Promise<string[]> {
     else {
       // 缓存为空，直接从 API 获取并缓存
       try {
-        const freshData = await fetchFromApi<string[]>(`/api/searchhistory`)
+        const freshData = await fetchFromApi<string[]>('/api/searchhistory')
         cacheManager.cacheSearchHistory(freshData)
         return freshData
       }
@@ -804,7 +804,7 @@ export async function clearSearchHistory(): Promise<void> {
 
     // 异步同步到数据库
     try {
-      await fetchWithAuth(`/api/searchhistory`, {
+      await fetchWithAuth('/api/searchhistory', {
         method: 'DELETE',
       })
     }
@@ -902,7 +902,7 @@ export async function getAllFavorites(): Promise<Record<string, Favorite>> {
 
     if (cachedData) {
       // 返回缓存数据，同时后台异步更新
-      fetchFromApi<Record<string, Favorite>>(`/api/favorites`)
+      fetchFromApi<Record<string, Favorite>>('/api/favorites')
         .then((freshData) => {
           // 只有数据真正不同时才更新缓存
           if (JSON.stringify(cachedData) !== JSON.stringify(freshData)) {
@@ -926,7 +926,7 @@ export async function getAllFavorites(): Promise<Record<string, Favorite>> {
       // 缓存为空，直接从 API 获取并缓存
       try {
         const freshData
-          = await fetchFromApi<Record<string, Favorite>>(`/api/favorites`)
+          = await fetchFromApi<Record<string, Favorite>>('/api/favorites')
         cacheManager.cacheFavorites(freshData)
         return freshData
       }
@@ -1095,7 +1095,7 @@ export async function isFavorited(
 
     if (cachedFavorites) {
       // 返回缓存数据，同时后台异步更新
-      fetchFromApi<Record<string, Favorite>>(`/api/favorites`)
+      fetchFromApi<Record<string, Favorite>>('/api/favorites')
         .then((freshData) => {
           // 只有数据真正不同时才更新缓存
           if (JSON.stringify(cachedFavorites) !== JSON.stringify(freshData)) {
@@ -1119,7 +1119,7 @@ export async function isFavorited(
       // 缓存为空，直接从 API 获取并缓存
       try {
         const freshData
-          = await fetchFromApi<Record<string, Favorite>>(`/api/favorites`)
+          = await fetchFromApi<Record<string, Favorite>>('/api/favorites')
         cacheManager.cacheFavorites(freshData)
         return !!freshData[key]
       }
@@ -1155,7 +1155,7 @@ export async function clearAllPlayRecords(): Promise<void> {
 
     // 异步同步到数据库
     try {
-      await fetchWithAuth(`/api/playrecords`, {
+      await fetchWithAuth('/api/playrecords', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -1198,7 +1198,7 @@ export async function clearAllFavorites(): Promise<void> {
 
     // 异步同步到数据库
     try {
-      await fetchWithAuth(`/api/favorites`, {
+      await fetchWithAuth('/api/favorites', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -1246,10 +1246,10 @@ export async function refreshAllCache(): Promise<void> {
     // 并行刷新所有数据
     const [playRecords, favorites, searchHistory, skipConfigs]
       = await Promise.allSettled([
-        fetchFromApi<Record<string, PlayRecord>>(`/api/playrecords`),
-        fetchFromApi<Record<string, Favorite>>(`/api/favorites`),
-        fetchFromApi<string[]>(`/api/searchhistory`),
-        fetchFromApi<Record<string, SkipConfig>>(`/api/skipconfigs`),
+        fetchFromApi<Record<string, PlayRecord>>('/api/playrecords'),
+        fetchFromApi<Record<string, Favorite>>('/api/favorites'),
+        fetchFromApi<string[]>('/api/searchhistory'),
+        fetchFromApi<Record<string, SkipConfig>>('/api/skipconfigs'),
       ])
 
     if (playRecords.status === 'fulfilled') {
@@ -1413,7 +1413,7 @@ export async function getSkipConfig(
 
     if (cachedData) {
       // 返回缓存数据，同时后台异步更新
-      fetchFromApi<Record<string, SkipConfig>>(`/api/skipconfigs`)
+      fetchFromApi<Record<string, SkipConfig>>('/api/skipconfigs')
         .then((freshData) => {
           // 只有数据真正不同时才更新缓存
           if (JSON.stringify(cachedData) !== JSON.stringify(freshData)) {
@@ -1436,7 +1436,7 @@ export async function getSkipConfig(
       // 缓存为空，直接从 API 获取并缓存
       try {
         const freshData
-          = await fetchFromApi<Record<string, SkipConfig>>(`/api/skipconfigs`)
+          = await fetchFromApi<Record<string, SkipConfig>>('/api/skipconfigs')
         cacheManager.cacheSkipConfigs(freshData)
         return freshData[key] || null
       }
@@ -1546,7 +1546,7 @@ export async function getAllSkipConfigs(): Promise<Record<string, SkipConfig>> {
 
     if (cachedData) {
       // 返回缓存数据，同时后台异步更新
-      fetchFromApi<Record<string, SkipConfig>>(`/api/skipconfigs`)
+      fetchFromApi<Record<string, SkipConfig>>('/api/skipconfigs')
         .then((freshData) => {
           // 只有数据真正不同时才更新缓存
           if (JSON.stringify(cachedData) !== JSON.stringify(freshData)) {
@@ -1570,7 +1570,7 @@ export async function getAllSkipConfigs(): Promise<Record<string, SkipConfig>> {
       // 缓存为空，直接从 API 获取并缓存
       try {
         const freshData
-          = await fetchFromApi<Record<string, SkipConfig>>(`/api/skipconfigs`)
+          = await fetchFromApi<Record<string, SkipConfig>>('/api/skipconfigs')
         cacheManager.cacheSkipConfigs(freshData)
         return freshData
       }

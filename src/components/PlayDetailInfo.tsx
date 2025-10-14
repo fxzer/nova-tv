@@ -23,18 +23,18 @@ export default function PlayDetailInfo({
         <div className="bg-gray-300 dark:bg-gray-700  aspect-[2/3] flex items-center justify-center rounded-xl overflow-hidden">
           {videoCover
             ? (
-                <Image
-                  src={processImageUrl(videoCover)}
-                  alt={videoTitle}
-                  width={200}
-                  height={300}
-                  loading="lazy"
-                  className="object-cover"
-                />
-              )
+              <Image
+                src={processImageUrl(videoCover)}
+                alt={videoTitle}
+                width={200}
+                height={300}
+                loading="lazy"
+                className="object-cover"
+              />
+            )
             : (
-                <span className="text-gray-600 dark:text-gray-400">封面图片</span>
-              )}
+              <span className="text-gray-600 dark:text-gray-400">封面图片</span>
+            )}
         </div>
       </div>
 

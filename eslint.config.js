@@ -1,54 +1,36 @@
-// 临时简化的 ESLint 配置，避免 JSDoc 插件问题
-import typescript from '@typescript-eslint/eslint-plugin'
-import typescriptParser from '@typescript-eslint/parser'
+import { FlatCompat } from '@eslint/eslintrc'
+import js from '@eslint/js'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: {},
+})
 
 export default [
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     ignores: [
-      'public/sw.js',
-      'public/workbox-*.js',
-      'node_modules',
-      '.next',
-      'dist',
-      'scripts',
-      'build',
-      'coverage',
-      'temp',
-      '.vscode',
-      '.idea',
+      '.next/**',
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      'public/**/*.js',
+      '*.config.js',
+      'start.js',
     ],
   },
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
-    languageOptions: {
-      parser: typescriptParser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-    },
-    plugins: {
-      '@typescript-eslint': typescript,
-    },
     rules: {
-      // TypeScript 规则
-      '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
-
-      // 基本规则
-      'no-console': 'warn',
-      'no-debugger': 'error',
-      'no-eval': 'warn',
-      'eqeqeq': 'warn',
-      'no-cond-assign': 'error',
-      'no-empty': 'warn',
-
-      // React 规则
-      'react/prop-types': 'off',
-      'react/react-in-jsx-scope': 'off',
+      // 根据你的需求，放宽一些规则
+      '@typescript-eslint/no-explicit-any': 'warn', // any 类型改为警告
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }], // 未使用变量改为警告
+      '@typescript-eslint/no-require-imports': 'off', // 关闭 require 导入检查
+      '@typescript-eslint/no-unused-expressions': 'off', // 关闭未使用表达式检查
     },
   },
 ]

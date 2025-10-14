@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable */
+ 
 // 根据 SITE_NAME 动态生成 manifest.json
 
 import fs from 'fs';
