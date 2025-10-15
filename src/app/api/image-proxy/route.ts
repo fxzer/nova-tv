@@ -15,13 +15,16 @@ export async function GET(request: NextRequest) {
 
     // 限制域名白名单，防止滥用
     const allowedDomains = [
+      // 豆瓣相关域名
       'doubanio.com',
+      'douban.com',
       'img1.doubanio.com',
       'img2.doubanio.com',
       'img3.doubanio.com',
       'img9.doubanio.com',
       'movie.douban.com',
-      // 添加更多图片域名
+
+      // 其他图片域名
       'yczy5.com',
       'mtzy0.com',
       'img.jisuimage.com',
@@ -36,6 +39,32 @@ export async function GET(request: NextRequest) {
       'p1.so.tn',
       'p2.so.tn',
       'p3.so.tn',
+      'ikgambwqeqnv.com',
+      'tu.ikgambwqeqnv.com',
+      'imgwolong.com',
+
+      // API站点域名（来自config.json）
+      'caiji.dyttzyapi.com',
+      'json.heimuer.xyz',
+      'heimuer.tv',
+      'cj.rycjapi.com',
+      'bfzyapi.com',
+      'tyyszy.com',
+      'ffzy5.tv',
+      '360zy.com',
+      'caiji.maotaizy.cc',
+      'wolongzyw.com',
+      'jszyapi.com',
+      'dbzy.tv',
+      'mozhuazy.com',
+      'www.mdzyapi.com',
+      'api.zuidapi.com',
+      'm3u8.apiyhzy.com',
+      'api.wujinapi.me',
+      'wwzy.tv',
+      'ikunzyapi.com',
+      'cj.lziapi.com',
+      'zy.xmm.hk',
     ]
 
     // 检查是否为允许的域名
@@ -46,17 +75,30 @@ export async function GET(request: NextRequest) {
     }
 
     // 动态设置 Referer 头
-    let referer = 'https://www.baidu.com/'
-    if (url.hostname.includes('douban.com') || url.hostname.includes('doubanio.com')) {
-      referer = 'https://movie.douban.com/'
+    const hostname = url.hostname
+
+    // 特殊 Referer 配置
+    const specialReferers: Record<string, string> = {
+      'douban.com': 'https://movie.douban.com/',
+      'doubanio.com': 'https://movie.douban.com/',
+      'heimuer.xyz': 'https://heimuer.tv/',
+      'heimuer.tv': 'https://heimuer.tv/',
     }
-    else if (url.hostname.includes('yczy5.com') || url.hostname.includes('mtzy0.com')) {
-      referer = 'https://www.baidu.com/'
+
+    // 检查是否有特殊配置
+    let referer: string | undefined
+    for (const [domain, specialReferer] of Object.entries(specialReferers)) {
+      if (hostname.includes(domain)) {
+        referer = specialReferer
+        break
+      }
     }
-    else if (url.hostname.includes('jisuimage.com')) {
-      referer = 'https://www.jisuimage.com/'
+
+    // 默认使用域名本身作为 Referer
+    if (!referer) {
+      const baseDomain = hostname.replace(/^[^.]+\./, '')
+      referer = `https://www.${baseDomain}/`
     }
-    // 可以根据不同域名设置不同的 referer
 
     // 获取图片
     const response = await fetch(imageUrl, {

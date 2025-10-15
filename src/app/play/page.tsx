@@ -28,6 +28,7 @@ import {
   saveSkipConfig,
   subscribeToDataUpdates,
 } from '@/lib/db.client'
+import { processImageUrlWithFallback } from '@/lib/utils'
 
 // 扩展 HTMLVideoElement 类型以支持 hls 属性
 declare global {
@@ -1131,7 +1132,7 @@ function PlayPageClient() {
       artPlayerRef.current.switch = videoUrl
       artPlayerRef.current.title = `${videoTitle} - 第${currentEpisodeIndex + 1
       }集`
-      artPlayerRef.current.poster = videoCover
+      artPlayerRef.current.poster = processImageUrlWithFallback(videoCover, videoCover)
       if (artPlayerRef.current?.video) {
         ensureVideoSource(
           artPlayerRef.current.video as HTMLVideoElement,
@@ -1159,7 +1160,7 @@ function PlayPageClient() {
       artPlayerRef.current = new artplayerRef.current({
         container: artRef.current,
         url: videoUrl,
-        poster: videoCover,
+        poster: processImageUrlWithFallback(videoCover, videoCover),
         volume: 0.7,
         isLive: false,
         muted: false,

@@ -31,9 +31,10 @@ const ImageWithErrorFallback: React.FC<ImageWithErrorFallbackProps> = ({
     if (imageSrc.includes('/api/image-proxy?') && retryCount === 0) {
       console.log('代理图片加载失败，尝试原始URL:', src)
       try {
-        const url = new URL(imageSrc)
-        const originalUrl = url.searchParams.get('url')
-        if (originalUrl) {
+        // 从相对路径中解析出原始URL
+        const urlMatch = imageSrc.match(/url=([^&]+)/)
+        if (urlMatch && urlMatch[1]) {
+          const originalUrl = decodeURIComponent(urlMatch[1])
           setImageSrc(originalUrl)
           setRetryCount(1)
           setIsLoading(true)

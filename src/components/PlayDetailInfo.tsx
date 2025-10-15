@@ -1,7 +1,6 @@
 import type { SearchResult } from '@/lib/types'
 
-import Image from 'next/image'
-import { processImageUrl } from '@/lib/utils'
+import SafeImage from './SafeImage'
 
 interface PlayDetailInfoProps {
   videoTitle: string
@@ -20,21 +19,21 @@ export default function PlayDetailInfo({
     <div className="flex gap-4">
       {/* 封面展示 */}
       <div className="hidden md:block">
-        <div className="bg-gray-300 dark:bg-gray-700  aspect-[2/3] flex items-center justify-center rounded-xl overflow-hidden">
-          {videoCover
-            ? (
-                <Image
-                  src={processImageUrl(videoCover)}
-                  alt={videoTitle}
-                  width={200}
-                  height={300}
-                  loading="lazy"
-                  className="object-cover"
-                />
-              )
-            : (
-                <span className="text-gray-600 dark:text-gray-400">封面图片</span>
-              )}
+        <div className="bg-gray-300 dark:bg-gray-700 w-[200px] h-[300px] flex items-center justify-center rounded-xl overflow-hidden">
+          {videoCover ? (
+            <SafeImage
+              src={videoCover}
+              alt={videoTitle}
+              width={200}
+              height={300}
+              loading="lazy"
+              className="w-full h-full object-cover"
+              unoptimized={true}
+              fallbackSrc={videoCover}
+            />
+          ) : (
+            <span className="text-gray-600 dark:text-gray-400">封面图片</span>
+          )}
         </div>
       </div>
 

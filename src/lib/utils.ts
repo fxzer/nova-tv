@@ -28,6 +28,90 @@ export function getImageProxyUrl(): string | null {
 }
 
 /**
+ * 检查是否为外部图片（需要代理的图片）
+ */
+function isExternalImage(url: string): boolean {
+  if (!url)
+    return false
+
+  // 跳过相对路径
+  if (url.startsWith('/') || url.startsWith('./') || url.startsWith('../'))
+    return false
+
+  // 跳过 data URL
+  if (url.startsWith('data:'))
+    return false
+
+  try {
+    const urlObj = new URL(url)
+    const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost'
+
+    // 如果是相同域名，不需要代理
+    if (urlObj.hostname === currentHost)
+      return false
+
+    // 检查是否为已知的需要代理的域名
+    const needsProxyDomains = [
+      // 豆瓣相关域名
+      'doubanio.com',
+      'douban.com',
+      'img1.doubanio.com',
+      'img2.doubanio.com',
+      'img3.doubanio.com',
+      'img9.doubanio.com',
+
+      // 其他图片域名
+      'yczy5.com',
+      'mtzy0.com',
+      'img.jisuimage.com',
+      'yzzy8.com',
+      'btzy8.com',
+      'ztzy8.com',
+      'cjtt.com',
+      'kkzy8.com',
+      'bttuku.com',
+      'img.liangnizi.com',
+      'tu.52av.one',
+      'p1.so.tn',
+      'p2.so.tn',
+      'p3.so.tn',
+      'ikgambwqeqnv.com',
+      'tu.ikgambwqeqnv.com',
+      'imgwolong.com',
+
+      // API站点域名（来自config.json）
+      'caiji.dyttzyapi.com',
+      'json.heimuer.xyz',
+      'heimuer.tv',
+      'cj.rycjapi.com',
+      'bfzyapi.com',
+      'tyyszy.com',
+      'ffzy5.tv',
+      '360zy.com',
+      'caiji.maotaizy.cc',
+      'wolongzyw.com',
+      'jszyapi.com',
+      'dbzy.tv',
+      'mozhuazy.com',
+      'www.mdzyapi.com',
+      'api.zuidapi.com',
+      'm3u8.apiyhzy.com',
+      'api.wujinapi.me',
+      'wwzy.tv',
+      'ikunzyapi.com',
+      'cj.lziapi.com',
+      'zy.xmm.hk',
+    ]
+
+    return needsProxyDomains.some(domain => urlObj.hostname.includes(domain))
+  }
+  catch {
+    // 如果 URL 解析失败，不使用代理
+    return false
+  }
+}
+
+/**
  * 处理图片 URL，如果设置了图片代理则使用代理
  */
 export function processImageUrl(originalUrl: string): string {
@@ -55,48 +139,16 @@ export function processImageUrlWithFallback(originalUrl: string, fallbackUrl?: s
     return fallbackUrl || ''
 
   try {
-    return processImageUrl(originalUrl)
+    const processedUrl = processImageUrl(originalUrl)
+    // 如果处理后的URL是代理URL，但原始URL不在需要代理的域名列表中，直接返回原始URL
+    if (processedUrl.includes('/api/image-proxy') && !isExternalImage(originalUrl)) {
+      return originalUrl
+    }
+    return processedUrl
   }
-  catch {
+  catch (error) {
+    console.warn('处理图片URL失败，使用回退URL:', error)
     return fallbackUrl || originalUrl
-  }
-}
-
-/**
- * 检查是否为外部图片（需要代理的图片）
- */
-function isExternalImage(url: string): boolean {
-  if (!url)
-    return false
-
-  // 跳过相对路径
-  if (url.startsWith('/') || url.startsWith('./') || url.startsWith('../'))
-    return false
-
-  // 跳过 data URL
-  if (url.startsWith('data:'))
-    return false
-
-  try {
-    const urlObj = new URL(url)
-    const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost'
-
-    // 如果是不同域名，或者是已知的需要代理的域名
-    const isDifferentHost = urlObj.hostname !== currentHost
-    const needsProxy = [
-      'doubanio.com',
-      'douban.com',
-      'img1.doubanio.com',
-      'img2.doubanio.com',
-      'img3.doubanio.com',
-      'img9.doubanio.com',
-    ].some(domain => urlObj.hostname.includes(domain))
-
-    return isDifferentHost || needsProxy
-  }
-  catch {
-    // 如果 URL 解析失败，也认为是外部图片
-    return true
   }
 }
 
