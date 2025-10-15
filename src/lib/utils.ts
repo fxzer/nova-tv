@@ -34,8 +34,8 @@ export function processImageUrl(originalUrl: string): string {
   if (!originalUrl)
     return originalUrl
 
-  // 如果是豆瓣图片，优先使用内置代理
-  if (isDoubanImage(originalUrl)) {
+  // 如果是外部图片（非相对路径和非本域名），使用代理
+  if (isExternalImage(originalUrl)) {
     return `/api/image-proxy?url=${encodeURIComponent(originalUrl)}`
   }
 
@@ -47,17 +47,56 @@ export function processImageUrl(originalUrl: string): string {
 }
 
 /**
- * 检查是否为豆瓣图片
+ * 处理图片 URL 并添加回退机制
+ * 用于需要错误处理的组件
  */
-function isDoubanImage(url: string): boolean {
-  if (!url)
-    return false
+export function processImageUrlWithFallback(originalUrl: string, fallbackUrl?: string): string {
+  if (!originalUrl)
+    return fallbackUrl || ''
+
   try {
-    const urlObj = new URL(url)
-    return urlObj.hostname.includes('doubanio.com') || urlObj.hostname.includes('douban.com')
+    return processImageUrl(originalUrl)
   }
   catch {
+    return fallbackUrl || originalUrl
+  }
+}
+
+/**
+ * 检查是否为外部图片（需要代理的图片）
+ */
+function isExternalImage(url: string): boolean {
+  if (!url)
     return false
+
+  // 跳过相对路径
+  if (url.startsWith('/') || url.startsWith('./') || url.startsWith('../'))
+    return false
+
+  // 跳过 data URL
+  if (url.startsWith('data:'))
+    return false
+
+  try {
+    const urlObj = new URL(url)
+    const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost'
+
+    // 如果是不同域名，或者是已知的需要代理的域名
+    const isDifferentHost = urlObj.hostname !== currentHost
+    const needsProxy = [
+      'doubanio.com',
+      'douban.com',
+      'img1.doubanio.com',
+      'img2.doubanio.com',
+      'img3.doubanio.com',
+      'img9.doubanio.com',
+    ].some(domain => urlObj.hostname.includes(domain))
+
+    return isDifferentHost || needsProxy
+  }
+  catch {
+    // 如果 URL 解析失败，也认为是外部图片
+    return true
   }
 }
 

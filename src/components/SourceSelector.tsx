@@ -20,6 +20,41 @@ const ImageWithErrorFallback: React.FC<ImageWithErrorFallbackProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
+  const [retryCount, setRetryCount] = useState(0)
+  const [imageSrc, setImageSrc] = useState(src)
+
+  // 处理图片加载错误
+  const handleImageError = () => {
+    setIsLoading(false)
+
+    // 如果是代理URL且还没重试过，尝试直接使用原始URL
+    if (imageSrc.includes('/api/image-proxy?') && retryCount === 0) {
+      console.log('代理图片加载失败，尝试原始URL:', src)
+      try {
+        const url = new URL(imageSrc)
+        const originalUrl = url.searchParams.get('url')
+        if (originalUrl) {
+          setImageSrc(originalUrl)
+          setRetryCount(1)
+          setIsLoading(true)
+          return
+        }
+      }
+      catch (e) {
+        console.error('解析代理URL失败:', e)
+      }
+    }
+
+    setHasError(true)
+  }
+
+  // 重置状态当src改变时
+  React.useEffect(() => {
+    setImageSrc(src)
+    setRetryCount(0)
+    setIsLoading(true)
+    setHasError(false)
+  }, [src])
 
   return (
     <div className="relative w-full h-full">
@@ -60,17 +95,14 @@ const ImageWithErrorFallback: React.FC<ImageWithErrorFallbackProps> = ({
         </div>
       )}
       <Image
-        src={src}
+        src={imageSrc}
         alt={alt}
         fill
         className={`${className} ${
           isLoading ? 'opacity-0' : 'opacity-100'
         } transition-opacity duration-300`}
         onLoad={() => setIsLoading(false)}
-        onError={() => {
-          setIsLoading(false)
-          setHasError(true)
-        }}
+        onError={handleImageError}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
     </div>

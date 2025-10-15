@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     // 验证URL格式
     const url = new URL(imageUrl)
 
-    // 只允许常见的图片域名
+    // 限制域名白名单，防止滥用
     const allowedDomains = [
       'doubanio.com',
       'img1.doubanio.com',
@@ -21,29 +21,50 @@ export async function GET(request: NextRequest) {
       'img3.doubanio.com',
       'img9.doubanio.com',
       'movie.douban.com',
+      // 可以根据需要添加更多允许的域名
     ]
 
-    if (!allowedDomains.some(domain => url.hostname.includes(domain))) {
+    // 检查是否为允许的域名
+    const isAllowedDomain = allowedDomains.some(domain => url.hostname.includes(domain))
+
+    if (!isAllowedDomain) {
       return NextResponse.json({ error: '不允许的图片域名' }, { status: 403 })
     }
+
+    // 动态设置 Referer 头
+    let referer = 'https://movie.douban.com/'
+    if (url.hostname.includes('douban.com') || url.hostname.includes('doubanio.com')) {
+      referer = 'https://movie.douban.com/'
+    }
+    // 可以根据不同域名设置不同的 referer
 
     // 获取图片
     const response = await fetch(imageUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Referer': 'https://movie.douban.com/',
-        'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': referer,
+        'Accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
       },
       // 设置超时时间
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(15000),
     })
 
     if (!response.ok) {
+      console.error(`图片代理 HTTP 错误: ${response.status} ${response.statusText} for URL: ${imageUrl}`)
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
     // 获取图片数据
     const imageBuffer = await response.arrayBuffer()
+
+    // 检查是否为有效的图片数据
+    if (imageBuffer.byteLength === 0) {
+      throw new Error('图片数据为空')
+    }
 
     // 获取内容类型
     const contentType = response.headers.get('content-type') || 'image/jpeg'
@@ -55,7 +76,10 @@ export async function GET(request: NextRequest) {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'X-Image-Proxy': 'true',
     })
+
+    console.log(`成功代理图片: ${imageUrl} (${contentType}, ${imageBuffer.byteLength} bytes)`)
 
     return new NextResponse(imageBuffer, {
       status: 200,
@@ -63,9 +87,17 @@ export async function GET(request: NextRequest) {
     })
   }
   catch (error) {
-    console.error('图片代理错误:', error)
+    console.error(`图片代理错误 for ${imageUrl}:`, error)
+
+    // 返回更详细的错误信息
+    const errorMessage = error instanceof Error ? error.message : '获取图片失败'
+
     return NextResponse.json(
-      { error: '获取图片失败' },
+      {
+        error: errorMessage,
+        imageUrl,
+        timestamp: new Date().toISOString(),
+      },
       { status: 500 },
     )
   }
