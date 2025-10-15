@@ -300,7 +300,7 @@ function UserConfig({ config, role, refreshConfig }: UserConfigProps) {
         </h4>
         <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
           <div className="text-2xl font-bold text-green-800 dark:text-green-300">
-            {config.UserConfig.Users.length}
+            {config.UserConfig.Users?.length}
           </div>
           <div className="text-sm text-green-600 dark:text-green-400">
             总用户数

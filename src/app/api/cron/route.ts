@@ -85,7 +85,7 @@ async function refreshRecordAndFavorites() {
       // 播放记录
       try {
         const playRecords = await db.getAllPlayRecords(user)
-        const totalRecords = Object.keys(playRecords).length
+        const totalRecords = Object.keys(playRecords)?.length
         let processedRecords = 0
 
         for (const [key, record] of Object.entries(playRecords)) {
@@ -138,7 +138,7 @@ async function refreshRecordAndFavorites() {
       // 收藏
       try {
         const favorites = await db.getAllFavorites(user)
-        const totalFavorites = Object.keys(favorites).length
+        const totalFavorites = Object.keys(favorites)?.length
         let processedFavorites = 0
 
         for (const [key, fav] of Object.entries(favorites)) {

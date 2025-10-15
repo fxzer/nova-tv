@@ -126,7 +126,7 @@ export default function SearchNavigation({
               // 计算项目数量
               const itemCount
                 = viewMode === 'agg' && groupData.groups
-                  ? groupData.groups.length // 聚合模式下显示聚合后的分组数量
+                  ? groupData.groups?.length // 聚合模式下显示聚合后的分组数量
                   : groupData.items?.length || 0
 
               const isSelected = selectedGroup === typeName

@@ -121,7 +121,7 @@ export default function VideoCard({
   )
   const actualEpisodes
     = aggregateData?.mostFrequentEpisodes
-      ?? (Array.isArray(episodes) ? episodes.length : episodes)
+      ?? (Array.isArray(episodes) ? episodes?.length : episodes)
   const actualYear = aggregateData?.first.year ?? year
   const actualQuery = query || ''
   const actualSearchType = isAggregate

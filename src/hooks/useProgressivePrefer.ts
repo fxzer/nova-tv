@@ -41,7 +41,7 @@ export function useProgressivePrefer() {
       sources: SearchResult[],
       onProgress?: (state: PreferProgressState) => void,
     ): Promise<SearchResult> => {
-      if (sources.length === 1) {
+      if (sources?.length === 1) {
         const singleSourceState = {
           stage: 'completed' as const,
           progress: 70,
@@ -62,21 +62,21 @@ export function useProgressivePrefer() {
         stage: 'testing' as const,
         progress: 35,
         message: '⚡ 正在测试播放源质量...',
-        detail: `准备测试 ${sources.length} 个播放源`,
+        detail: `准备测试 ${sources?.length} 个播放源`,
         testedSources: 0,
-        totalSources: sources.length,
+        totalSources: sources?.length,
       }
 
       setPreferProgressState(initialState)
       onProgress?.(initialState)
 
       // 将播放源分批测试
-      const batchSize = Math.ceil(sources.length / 2)
+      const batchSize = Math.ceil(sources?.length / 2)
       const allResults: Array<SourceTestResult | null> = []
 
-      for (let start = 0; start < sources.length; start += batchSize) {
+      for (let start = 0; start < sources?.length; start += batchSize) {
         const batchIndex = Math.floor(start / batchSize)
-        const totalBatches = Math.ceil(sources.length / batchSize)
+        const totalBatches = Math.ceil(sources?.length / batchSize)
         const batchSources = sources.slice(start, start + batchSize)
 
         // 更新批次进度
@@ -86,7 +86,7 @@ export function useProgressivePrefer() {
           message: '⚡ 正在测试播放源质量...',
           detail: `正在测试第 ${batchIndex + 1}/${totalBatches} 批播放源...`,
           testedSources: start,
-          totalSources: sources.length,
+          totalSources: sources?.length,
         }
 
         setPreferProgressState(batchState)
@@ -103,7 +103,7 @@ export function useProgressivePrefer() {
                 message: '⚡ 正在测试播放源质量...',
                 detail: `测试 ${source.source_name} 的播放质量...`,
                 testedSources: start + batchSources.indexOf(source),
-                totalSources: sources.length,
+                totalSources: sources?.length,
                 currentSourceName: source.source_name,
               }
 
@@ -111,12 +111,12 @@ export function useProgressivePrefer() {
               onProgress?.(testingState)
 
               // 检查是否有第一集的播放地址
-              if (!source.episodes || source.episodes.length === 0) {
+              if (!source.episodes || source.episodes?.length === 0) {
                 return null
               }
 
               const episodeUrl
-                = source.episodes.length > 1
+                = source.episodes?.length > 1
                   ? source.episodes[1]
                   : source.episodes[0]
 
@@ -150,11 +150,10 @@ export function useProgressivePrefer() {
           stage: 'testing' as const,
           progress: 35 + ((batchIndex + 1) / totalBatches) * 20,
           message: '⚡ 正在测试播放源质量...',
-          detail: `第 ${batchIndex + 1}/${totalBatches} 批测试完成，成功 ${
-            batchSuccessfulResults.length
+          detail: `第 ${batchIndex + 1}/${totalBatches} 批测试完成，成功 ${batchSuccessfulResults?.length
           } 个`,
-          testedSources: start + batchSources.length,
-          totalSources: sources.length,
+          testedSources: start + batchSources?.length,
+          totalSources: sources?.length,
         }
 
         setPreferProgressState(batchCompletedState)
@@ -167,8 +166,8 @@ export function useProgressivePrefer() {
         progress: 65,
         message: '⚡ 正在分析播放源质量...',
         detail: '正在计算最佳播放源评分...',
-        testedSources: allResults.length,
-        totalSources: sources.length,
+        testedSources: allResults?.length,
+        totalSources: sources?.length,
       }
 
       setPreferProgressState(analyzingState)
@@ -179,14 +178,14 @@ export function useProgressivePrefer() {
         Boolean,
       ) as SourceTestResult[]
 
-      if (successfulResults.length === 0) {
+      if (successfulResults?.length === 0) {
         const failState = {
           stage: 'completed' as const,
           progress: 70,
           message: '⚠️ 所有播放源测试失败',
           detail: '使用默认播放源',
           testedSources: 0,
-          totalSources: sources.length,
+          totalSources: sources?.length,
         }
 
         setPreferProgressState(failState)
@@ -210,11 +209,10 @@ export function useProgressivePrefer() {
         stage: 'completed' as const,
         progress: 70,
         message: '✅ 已选择最佳播放源',
-        detail: `使用 ${
-          bestSource.source_name
+        detail: `使用 ${bestSource.source_name
         } (评分: ${resultsWithScore[0].score.toFixed(2)})`,
-        testedSources: successfulResults.length,
-        totalSources: sources.length,
+        testedSources: successfulResults?.length,
+        totalSources: sources?.length,
         currentSourceName: bestSource.source_name,
       }
 

@@ -192,7 +192,7 @@ const Selector: React.FC<SelectorProps> = ({
       options = showOptions
     }
 
-    if (options.length > 0) {
+    if (options?.length > 0) {
       const cleanup = updateIndicatorPosition(
         activeIndex,
         secondaryContainerRef,

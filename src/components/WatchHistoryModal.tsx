@@ -129,12 +129,12 @@ export default function WatchHistoryModal({
             <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
               最近观看
             </h4>
-            {playRecords.length > 0 && (
+            {playRecords?.length > 0 && (
               <ClearButton onClear={handleClearPlayRecords} size="md" />
             )}
           </div>
           <div className="flex-1 overflow-y-auto min-h-0 pr-2">
-            {playRecords.length === 0
+            {playRecords?.length === 0
               ? (
                   <Empty />
                 )

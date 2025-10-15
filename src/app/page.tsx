@@ -132,12 +132,12 @@ function DoubanContent({
         )}
 
         {/* 没有更多数据提示 */}
-        {!hasMore && doubanData.length > 0 && (
+        {!hasMore && doubanData?.length > 0 && (
           <div className="text-center text-gray-500 py-8">已加载全部内容</div>
         )}
 
         {/* 空状态 */}
-        {!loading && doubanData.length === 0 && <Empty />}
+        {!loading && doubanData?.length === 0 && <Empty />}
       </div>
     </>
   )
@@ -193,7 +193,7 @@ function PageView() {
     const runtimeConfig = window.RUNTIME_CONFIG
     if (
       runtimeConfig?.CUSTOM_CATEGORIES
-      && runtimeConfig.CUSTOM_CATEGORIES.length > 0
+      && runtimeConfig.CUSTOM_CATEGORIES?.length > 0
     ) {
       setCustomCategories(runtimeConfig.CUSTOM_CATEGORIES)
     }
@@ -235,11 +235,11 @@ function PageView() {
     setSelectorsReady(false)
     setDoubanLoading(true)
 
-    if (currentView === 'custom' && customCategories.length > 0) {
+    if (currentView === 'custom' && customCategories?.length > 0) {
       const types = Array.from(
         new Set(customCategories.map(cat => cat.type)),
       )
-      if (types.length > 0) {
+      if (types?.length > 0) {
         let selectedType = types[0]
         if (types.includes('movie')) {
           selectedType = 'movie'
@@ -338,7 +338,7 @@ function PageView() {
 
       if (data.code === 200) {
         setDoubanData(data.list)
-        setHasMore(data.list.length === 25)
+        setHasMore(data.list?.length === 25)
         setDoubanLoading(false)
       }
       else {
@@ -422,7 +422,7 @@ function PageView() {
 
           if (data.code === 200) {
             setDoubanData(prev => [...prev, ...data.list])
-            setHasMore(data.list.length === 25)
+            setHasMore(data.list?.length === 25)
           }
           else {
             throw new Error(data.message || '获取数据失败')
@@ -482,7 +482,7 @@ function PageView() {
       if (value !== primarySelection) {
         setDoubanLoading(true)
 
-        if (currentView === 'custom' && customCategories.length > 0) {
+        if (currentView === 'custom' && customCategories?.length > 0) {
           const firstCategory = customCategories.find(
             cat => cat.type === value,
           )

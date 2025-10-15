@@ -137,12 +137,12 @@ export default function CollectionModal({
             <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
               收藏内容
             </h4>
-            {favoriteItems.length > 0 && (
+            {favoriteItems?.length > 0 && (
               <ClearButton onClear={handleClearFavorites} size="md" />
             )}
           </div>
           <div className="flex-1 overflow-y-auto min-h-0 pr-2">
-            {favoriteItems.length === 0
+            {favoriteItems?.length === 0
               ? (
                   <Empty />
                 )

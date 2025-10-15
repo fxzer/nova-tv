@@ -107,7 +107,7 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
     const scrollContainer = secondaryScrollContainerRef.current
     const capsuleContainer = secondaryContainerRef.current
 
-    if (scrollContainer && capsuleContainer && secondaryOptions.length > 0) {
+    if (scrollContainer && capsuleContainer && secondaryOptions?.length > 0) {
       // 重新添加事件监听器
       scrollContainer.addEventListener('wheel', handleSecondaryWheel, {
         passive: false,
@@ -159,7 +159,7 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
   // 组件挂载时立即计算初始位置
   useEffect(() => {
     // 主选择器初始位置
-    if (primaryOptions.length > 0) {
+    if (primaryOptions?.length > 0) {
       const activeIndex = primaryOptions.findIndex(
         opt => opt.value === (primarySelection || primaryOptions[0].value),
       )
@@ -172,7 +172,7 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
     }
 
     // 副选择器初始位置
-    if (secondaryOptions.length > 0) {
+    if (secondaryOptions?.length > 0) {
       const activeIndex = secondaryOptions.findIndex(
         opt =>
           opt.value === (secondarySelection || secondaryOptions[0].value),
@@ -188,7 +188,7 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
 
   // 监听主选择器变化
   useEffect(() => {
-    if (primaryOptions.length > 0) {
+    if (primaryOptions?.length > 0) {
       const activeIndex = primaryOptions.findIndex(
         opt => opt.value === primarySelection,
       )
@@ -204,7 +204,7 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
 
   // 监听副选择器变化
   useEffect(() => {
-    if (secondaryOptions.length > 0) {
+    if (secondaryOptions?.length > 0) {
       const activeIndex = secondaryOptions.findIndex(
         opt => opt.value === secondarySelection,
       )
@@ -273,7 +273,7 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
   }
 
   // 如果没有自定义分类，则不渲染任何内容
-  if (!customCategories || customCategories.length === 0) {
+  if (!customCategories || customCategories?.length === 0) {
     return null
   }
 
@@ -297,7 +297,7 @@ const CustomSelector: React.FC<CustomSelectorProps> = ({
         </div>
 
         {/* 二级选择器 */}
-        {secondaryOptions.length > 0 && (
+        {secondaryOptions?.length > 0 && (
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
             <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 min-w-[48px]">
               片单

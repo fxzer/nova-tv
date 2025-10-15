@@ -46,7 +46,7 @@ export default function HotContentSection({
               ))}
             </VideoGridContainer>
           )
-        : items.length > 0
+        : items?.length > 0
           ? (
               <VideoGridContainer>
                 {items.slice(0, 18).map((item, index) => (

@@ -86,7 +86,7 @@ function MobileBottomNav({
 
     if (
       runtimeConfig?.CUSTOM_CATEGORIES
-      && runtimeConfig.CUSTOM_CATEGORIES.length > 0
+      && runtimeConfig.CUSTOM_CATEGORIES?.length > 0
     ) {
       setNavItems((prevItems) => {
         // 移除"我的"项目，然后重新添加

@@ -6,5 +6,7 @@ export default antfu({
   rules: {
     'no-console': 'warn',
     'node/prefer-global/process': 'off',
+    'style/multiline-ternary': 'off',
+    'new-cap': 'off',
   },
 })

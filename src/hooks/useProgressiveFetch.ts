@@ -98,7 +98,7 @@ export function useProgressiveSearch() {
           stage: 'searching' as const,
           progress: 30,
           message: '🔍 搜索完成',
-          detail: `找到 ${results.length} 个匹配的播放源`,
+          detail: `找到 ${results?.length} 个匹配的播放源`,
         }
 
         setProgressState(finalState)

@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     }
     const cacheTime = await getCacheTime()
 
-    if (result.length === 0) {
+    if (result?.length === 0) {
       return NextResponse.json(
         {
           error: '未找到结果',

@@ -150,11 +150,11 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
     }
 
     // 获取第一集的URL
-    if (!source.episodes || source.episodes.length === 0) {
+    if (!source.episodes || source.episodes?.length === 0) {
       return
     }
     const episodeUrl
-      = source.episodes.length > 1 ? source.episodes[1] : source.episodes[0]
+      = source.episodes?.length > 1 ? source.episodes[1] : source.episodes[0]
 
     // 标记为已尝试
     setAttemptedSources(prev => new Set(prev).add(sourceKey))
@@ -228,7 +228,7 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
     const fetchVideoInfosInBatches = async () => {
       if (
         !optimizationEnabled // 若关闭测速则直接退出
-        || availableSources.length === 0
+        || availableSources?.length === 0
       ) {
         return
       }
@@ -239,12 +239,12 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
         return !attemptedSourcesRef.current.has(sourceKey)
       })
 
-      if (pendingSources.length === 0)
+      if (pendingSources?.length === 0)
         return
 
-      const batchSize = Math.ceil(pendingSources.length / 2)
+      const batchSize = Math.ceil(pendingSources?.length / 2)
 
-      for (let start = 0; start < pendingSources.length; start += batchSize) {
+      for (let start = 0; start < pendingSources?.length; start += batchSize) {
         const batch = pendingSources.slice(start, start + batchSize)
         await Promise.all(batch.map(getVideoInfo))
       }
@@ -287,7 +287,7 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
 
         {!sourceSearchLoading
           && !sourceSearchError
-          && availableSources.length === 0 && (
+          && availableSources?.length === 0 && (
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
               <div className="text-gray-400 text-2xl mb-2">📺</div>
@@ -300,14 +300,14 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
 
         {!sourceSearchLoading
           && !sourceSearchError
-          && availableSources.length > 0 && (
+          && availableSources?.length > 0 && (
           <div className="flex-1 overflow-y-auto pb-10">
             {/* 源数量显示 */}
             <div className="px-2 py-1 text-center">
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 共
                 {' '}
-                {availableSources.length}
+                {availableSources?.length}
                 {' '}
                 个
               </span>
@@ -362,7 +362,7 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
                         >
                           {/* 封面 */}
                           <div className="flex-shrink-0 h-20 aspect-[2/3]  bg-gray-200 dark:bg-gray-700 rounded overflow-hidden relative">
-                            {source.episodes && source.episodes.length > 0
+                            {source.episodes && source.episodes?.length > 0
                               ? (
                                   <ImageWithErrorFallback
                                     src={processImageUrl(source.poster)}
@@ -455,9 +455,9 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
                               <span className="text-xs p-1 text-nowrap border border-gray-500/60 rounded text-gray-700 dark:text-gray-300">
                                 {source.source_name}
                               </span>
-                              {source.episodes.length > 1 && (
+                              {source.episodes?.length > 1 && (
                                 <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                                  {source.episodes.length}
+                                  {source.episodes?.length}
                                   {' '}
                                   集
                                 </span>

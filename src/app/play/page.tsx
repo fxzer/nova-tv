@@ -1,7 +1,5 @@
 'use client'
 import type { SearchResult } from '@/lib/types'
-import Artplayer from 'artplayer'
-import Hls from 'hls.js'
 
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useRef, useState } from 'react'
@@ -64,6 +62,31 @@ function PlayPageClient() {
   // -----------------------------------------------------------------------------
   // 状态变量（State）
   // -----------------------------------------------------------------------------
+  // 动态导入状态
+  const artplayerRef = useRef<any>(null)
+  const hlsRef = useRef<any>(null)
+  const [_, setLibrariesLoaded] = useState(false)
+
+  // 动态导入客户端库
+  useEffect(() => {
+    const importLibraries = async () => {
+      try {
+        const [artplayerModule, hlsModule] = await Promise.all([
+          import('artplayer'),
+          import('hls.js'),
+        ])
+        artplayerRef.current = artplayerModule.default
+        hlsRef.current = hlsModule.default
+        setLibrariesLoaded(true)
+      }
+      catch (err) {
+        console.error('Failed to import player libraries:', err)
+      }
+    }
+
+    importLibraries()
+  }, [])
+
   // 使用进度跟踪 hooks
   const { searchSources, fetchVideoDetails, markReady }
     = useProgressiveSearch()
@@ -221,7 +244,7 @@ function PlayPageClient() {
         year: detailRef.current?.year,
         cover: detailRef.current?.poster || '',
         index: currentEpisodeIndexRef.current + 1, // 转换为1基索引
-        total_episodes: detailRef.current?.episodes.length || 1,
+        total_episodes: detailRef.current?.episodes?.length || 1,
         play_time: Math.floor(currentTime),
         total_time: Math.floor(duration),
         save_time: Date.now(),
@@ -296,7 +319,7 @@ function PlayPageClient() {
     if (
       !detailData
       || !detailData.episodes
-      || episodeIndex >= detailData.episodes.length
+      || episodeIndex >= (detailData.episodes?.length || 0)
     ) {
       setVideoUrl('')
       return
@@ -337,7 +360,7 @@ function PlayPageClient() {
     const lines = m3u8Content.split('\n')
     const filteredLines = []
 
-    for (let i = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines?.length; i++) {
       const line = lines[i]
 
       // 只过滤#EXT-X-DISCONTINUITY标识
@@ -433,35 +456,36 @@ function PlayPageClient() {
     }
   }
 
-  class CustomHlsJsLoader extends Hls.DefaultConfig.loader {
-    constructor(config: any) {
-      super(config)
-      const load = this.load.bind(this)
-      this.load = function (context: any, config: any, callbacks: any) {
+  const CustomHlsJsLoader = hlsRef.current
+    ? class extends hlsRef.current.DefaultConfig.loader {
+      constructor(config: any) {
+        super(config)
+        const load = this.load.bind(this)
+        this.load = function (context: any, config: any, callbacks: any) {
         // 拦截manifest和level请求
-        if (
-          (context as any).type === 'manifest'
-          || (context as any).type === 'level'
-        ) {
-          const onSuccess = callbacks.onSuccess
-          callbacks.onSuccess = function (
-            response: any,
-            stats: any,
-            context: any,
+          if (
+            (context as any).type === 'manifest'
+            || (context as any).type === 'level'
           ) {
+            const onSuccess = callbacks.onSuccess
+            callbacks.onSuccess = function (
+              response: any,
+              stats: any,
+              context: any,
+            ) {
             // 如果是m3u8文件，处理内容以移除广告分段
-            if (response.data && typeof response.data === 'string') {
+              if (response.data && typeof response.data === 'string') {
               // 过滤掉广告段 - 实现更精确的广告过滤逻辑
-              response.data = filterAdsFromM3U8(response.data)
+                response.data = filterAdsFromM3U8(response.data)
+              }
+              return onSuccess(response, stats, context, null)
             }
-            return onSuccess(response, stats, context, null)
           }
+          // 执行原始load方法
+          load(context, config, callbacks)
         }
-        // 执行原始load方法
-        load(context, config, callbacks)
       }
-    }
-  }
+    } : null
 
   // 当集数索引变化时自动更新视频地址
   useEffect(() => {
@@ -495,7 +519,7 @@ function PlayPageClient() {
             const searchQuery = detailData.title
             sourcesInfo = await searchSources(searchQuery, updateProgressState)
 
-            if (sourcesInfo.length === 0) {
+            if (sourcesInfo?.length === 0) {
               // 如果没找到其他源，至少保留当前源
               sourcesInfo = [detailData]
             }
@@ -522,7 +546,7 @@ function PlayPageClient() {
               })
 
               // 如果过滤后结果为空或太少，使用更宽松的匹配策略
-              if (filteredSources.length === 0) {
+              if (filteredSources?.length === 0) {
                 // 宽松匹配：只匹配标题相似度（忽略年份和集数差异）
                 const looselyFilteredSources = sourcesInfo.filter((source) => {
                   const normalizeTitle = (title: string) => {
@@ -536,7 +560,7 @@ function PlayPageClient() {
                   return titleMatch
                 })
 
-                if (looselyFilteredSources.length > 0) {
+                if (looselyFilteredSources?.length > 0) {
                   sourcesInfo = looselyFilteredSources
                 }
                 // 如果宽松匹配也没有结果，保留原始搜索结果
@@ -583,7 +607,7 @@ function PlayPageClient() {
               updateProgressState,
             )
 
-            if (sourcesInfo.length === 0) {
+            if (sourcesInfo?.length === 0) {
               setError('未找到匹配结果')
               setLoading(false)
               return
@@ -612,7 +636,7 @@ function PlayPageClient() {
             updateProgressState,
           )
 
-          if (sourcesInfo.length === 0) {
+          if (sourcesInfo?.length === 0) {
             setError('未找到匹配结果')
             setLoading(false)
             return
@@ -643,7 +667,7 @@ function PlayPageClient() {
         setDetail(detailData)
         setAvailableSources(sourcesInfo)
 
-        if (currentEpisodeIndex >= detailData.episodes.length) {
+        if (detailData.episodes && currentEpisodeIndex >= detailData?.episodes?.length) {
           setCurrentEpisodeIndex(0)
         }
 
@@ -781,7 +805,7 @@ function PlayPageClient() {
       let targetIndex = currentEpisodeIndex
 
       // 如果当前集数超出新源的范围，则跳转到第一集
-      if (!newDetail.episodes || targetIndex >= newDetail.episodes.length) {
+      if (!newDetail.episodes || targetIndex >= (newDetail.episodes?.length || 0)) {
         targetIndex = 0
       }
 
@@ -835,7 +859,7 @@ function PlayPageClient() {
   const handleNextEpisode = () => {
     const d = detailRef.current
     const idx = currentEpisodeIndexRef.current
-    if (d && d.episodes && idx < d.episodes.length - 1) {
+    if (d && d.episodes && idx < (d.episodes?.length || 0) - 1) {
       if (artPlayerRef.current && !artPlayerRef.current.paused) {
         saveCurrentPlayProgress()
       }
@@ -865,7 +889,7 @@ function PlayPageClient() {
     if (e.altKey && e.key === 'ArrowRight') {
       const d = detailRef.current
       const idx = currentEpisodeIndexRef.current
-      if (d && idx < d.episodes.length - 1) {
+      if (d && idx < (d.episodes?.length || 0) - 1) {
         handleNextEpisode()
         e.preventDefault()
       }
@@ -1052,7 +1076,7 @@ function PlayPageClient() {
           source_name: detailRef.current?.source_name || '',
           year: detailRef.current?.year,
           cover: detailRef.current?.poster || '',
-          total_episodes: detailRef.current?.episodes.length || 1,
+          total_episodes: detailRef.current?.episodes?.length || 1,
           save_time: Date.now(),
           search_title: searchTitle,
         })
@@ -1066,8 +1090,8 @@ function PlayPageClient() {
 
   useEffect(() => {
     if (
-      !Artplayer
-      || !Hls
+      !artplayerRef.current
+      || !hlsRef.current
       || !videoUrl
       || loading
       || currentEpisodeIndex === null
@@ -1080,7 +1104,7 @@ function PlayPageClient() {
     if (
       !detail
       || !detail.episodes
-      || currentEpisodeIndex >= detail.episodes.length
+      || currentEpisodeIndex >= (detail.episodes?.length || 0)
       || currentEpisodeIndex < 0
     ) {
       setError(`选集索引无效，当前共 ${totalEpisodes} 集`)
@@ -1124,10 +1148,10 @@ function PlayPageClient() {
 
     try {
       // 创建新的播放器实例
-      Artplayer.PLAYBACK_RATE = [3, 2, 1.5, 1.25, 1, 0.75, 0.5]
-      Artplayer.USE_RAF = true
+      artplayerRef.current.PLAYBACK_RATE = [3, 2, 1.5, 1.25, 1, 0.75, 0.5]
+      artplayerRef.current.USE_RAF = true
 
-      artPlayerRef.current = new Artplayer({
+      artPlayerRef.current = new artplayerRef.current({
         container: artRef.current,
         url: videoUrl,
         poster: videoCover,
@@ -1164,7 +1188,7 @@ function PlayPageClient() {
         // HLS 支持配置
         customType: {
           m3u8(video: HTMLVideoElement, url: string) {
-            if (!Hls) {
+            if (!hlsRef.current) {
               console.error('HLS.js 未加载')
               return
             }
@@ -1172,7 +1196,8 @@ function PlayPageClient() {
             if (video.hls) {
               video.hls.destroy()
             }
-            const hls = new Hls({
+
+            const hls = new hlsRef.current({
               debug: false, // 关闭日志
               enableWorker: true, // WebWorker 解码，降低主线程压力
               lowLatencyMode: true, // 开启低延迟 LL-HLS
@@ -1183,9 +1208,9 @@ function PlayPageClient() {
               maxBufferSize: 60 * 1000 * 1000, // 约 60MB，超出后触发清理
 
               /* 自定义loader */
-              loader: blockAdEnabledRef.current
+              loader: blockAdEnabledRef.current && CustomHlsJsLoader
                 ? CustomHlsJsLoader
-                : Hls.DefaultConfig.loader,
+                : hlsRef.current.DefaultConfig.loader,
             })
 
             hls.loadSource(url)
@@ -1194,13 +1219,13 @@ function PlayPageClient() {
 
             ensureVideoSource(video, url)
 
-            hls.on(Hls.Events.ERROR, (event: any, data: any) => {
+            hls.on(hlsRef.current.Events.ERROR, (event: any, data: any) => {
               if (data.fatal) {
                 switch (data.type) {
-                  case Hls.ErrorTypes.NETWORK_ERROR:
+                  case hlsRef.current.ErrorTypes.NETWORK_ERROR:
                     hls.startLoad()
                     break
-                  case Hls.ErrorTypes.MEDIA_ERROR:
+                  case hlsRef.current.ErrorTypes.MEDIA_ERROR:
                     hls.recoverMediaError()
                     break
                   default:
@@ -1471,7 +1496,7 @@ function PlayPageClient() {
       artPlayerRef.current.on('video:ended', () => {
         const d = detailRef.current
         const idx = currentEpisodeIndexRef.current
-        if (d && d.episodes && idx < d.episodes.length - 1) {
+        if (d && d.episodes && idx < (d.episodes?.length || 0) - 1) {
           setTimeout(() => {
             setCurrentEpisodeIndex(idx + 1)
           }, 1000)
@@ -1517,7 +1542,7 @@ function PlayPageClient() {
         styleElement.remove()
       }
     }
-  }, [Artplayer, Hls, videoUrl, loading, blockAdEnabled])
+  }, [artplayerRef.current, hlsRef.current, videoUrl, loading, blockAdEnabled])
 
   // 当组件卸载时清理定时器
   useEffect(() => {

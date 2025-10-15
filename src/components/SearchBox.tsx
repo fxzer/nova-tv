@@ -146,7 +146,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ className = '' }) => {
   }, [])
 
   const handleSearchInputFocus = useCallback(() => {
-    if (searchHistory.length > 0) {
+    if (searchHistory?.length > 0) {
       setShowSearchHistory(true)
     }
   }, [searchHistory])
@@ -186,14 +186,14 @@ const SearchBox: React.FC<SearchBoxProps> = ({ className = '' }) => {
       </form>
 
       {/* 搜索历史弹层 */}
-      {showSearchHistory && searchHistory.length > 0 && (
+      {showSearchHistory && searchHistory?.length > 0 && (
         <div className="absolute top-full mt-2 left-0 right-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border border-gray-200/60 dark:border-gray-600/60 rounded-lg shadow-lg overflow-hidden">
           <div className="p-3 border-b border-gray-100/50 dark:border-gray-700/50 flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               <Clock className="h-4 w-4" />
               <span>搜索历史</span>
             </div>
-            {searchHistory.length > 0 && (
+            {searchHistory?.length > 0 && (
               <ClearButton onClear={handleClearAllSearchHistory} size="sm" />
             )}
           </div>

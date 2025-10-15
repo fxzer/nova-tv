@@ -83,8 +83,8 @@ export default function ProfilePage() {
         const allFavorites = await getAllFavorites()
         const allPlayRecords = await getAllPlayRecords()
 
-        setFavoritesCount(Object.keys(allFavorites).length)
-        setWatchHistoryCount(Object.keys(allPlayRecords).length)
+        setFavoritesCount(Object.keys(allFavorites)?.length)
+        setWatchHistoryCount(Object.keys(allPlayRecords)?.length)
       }
       catch {
         // 忽略获取数据数量失败
@@ -97,7 +97,7 @@ export default function ProfilePage() {
     const unsubscribeFavorites = subscribeToDataUpdates(
       'favoritesUpdated',
       (newFavorites: Record<string, Favorite>) => {
-        setFavoritesCount(Object.keys(newFavorites).length)
+        setFavoritesCount(Object.keys(newFavorites)?.length)
       },
     )
 
@@ -105,7 +105,7 @@ export default function ProfilePage() {
     const unsubscribePlayRecords = subscribeToDataUpdates(
       'playRecordsUpdated',
       (newRecords: Record<string, PlayRecord>) => {
-        setWatchHistoryCount(Object.keys(newRecords).length)
+        setWatchHistoryCount(Object.keys(newRecords)?.length)
       },
     )
 

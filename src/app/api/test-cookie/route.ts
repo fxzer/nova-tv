@@ -14,7 +14,5 @@ export async function GET() {
     secure: false,
   })
 
-  console.log('Setting cookie:', encodedValue)
-
   return response
 }

@@ -229,7 +229,6 @@ export async function getVideoResolutionFromM3u8(m3u8Url: string): Promise<{
 
       // 监听hls.js错误
       hls.on(Hls.Events.ERROR, (event, data) => {
-        console.error('HLS错误:', data)
         if (data.fatal) {
           clearTimeout(timeout)
           hls.destroy()
@@ -247,8 +246,7 @@ export async function getVideoResolutionFromM3u8(m3u8Url: string): Promise<{
   }
   catch (error) {
     throw new Error(
-      `Error getting video resolution: ${
-        error instanceof Error ? error.message : String(error)
+      `Error getting video resolution: ${error instanceof Error ? error.message : String(error)
       }`,
     )
   }

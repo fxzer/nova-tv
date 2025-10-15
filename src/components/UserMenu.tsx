@@ -94,8 +94,8 @@ export const UserMenu: React.FC = () => {
         const allFavorites = await getAllFavorites()
         const allPlayRecords = await getAllPlayRecords()
 
-        setFavoritesCount(Object.keys(allFavorites).length)
-        setWatchHistoryCount(Object.keys(allPlayRecords).length)
+        setFavoritesCount(Object.keys(allFavorites)?.length)
+        setWatchHistoryCount(Object.keys(allPlayRecords)?.length)
       }
       catch (error) {
         console.warn('获取数据数量失败:', error)
@@ -108,7 +108,7 @@ export const UserMenu: React.FC = () => {
     const unsubscribeFavorites = subscribeToDataUpdates(
       'favoritesUpdated',
       (newFavorites: Record<string, Favorite>) => {
-        setFavoritesCount(Object.keys(newFavorites).length)
+        setFavoritesCount(Object.keys(newFavorites)?.length)
       },
     )
 
@@ -116,7 +116,7 @@ export const UserMenu: React.FC = () => {
     const unsubscribePlayRecords = subscribeToDataUpdates(
       'playRecordsUpdated',
       (newRecords: Record<string, PlayRecord>) => {
-        setWatchHistoryCount(Object.keys(newRecords).length)
+        setWatchHistoryCount(Object.keys(newRecords)?.length)
       },
     )
 

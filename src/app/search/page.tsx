@@ -56,7 +56,7 @@ function SearchPageClient() {
 
     // 按分组内结果个数排序（从多到少）
     return Array.from(typeMap.entries()).sort(
-      (a, b) => b[1].length - a[1].length,
+      (a, b) => b[1]?.length - a[1]?.length,
     )
   }, [searchResults])
 
@@ -73,7 +73,7 @@ function SearchPageClient() {
         // 使用 title + year + type 作为键，year 必然存在，但依然兜底 'unknown'
         const key = `${item.title.replaceAll(' ', '')}-${
           item.year || 'unknown'
-        }-${item.episodes.length === 1 ? 'movie' : 'tv'}`
+        }-${item.episodes?.length === 1 ? 'movie' : 'tv'}`
         const arr = map.get(key) || []
         arr.push(item)
         map.set(key, arr)
@@ -282,7 +282,7 @@ function SearchPageClient() {
 
   // 当搜索结果更新时，默认选中第一个分组
   useEffect(() => {
-    if (groupedResults.length > 0) {
+    if (groupedResults?.length > 0) {
       // 检查当前选中的分组是否在新的结果中
       const currentGroupExists = groupedResults.some(
         ([typeName]) => typeName === selectedGroup,
@@ -390,7 +390,7 @@ function SearchPageClient() {
                                     id={item.id}
                                     title={`${item.title} ${item.type_name}`}
                                     poster={item.poster}
-                                    episodes={item.episodes.length}
+                                    episodes={item.episodes?.length}
                                     source={item.source}
                                     source_name={item.source_name}
                                     douban_id={item.douban_id?.toString()}
@@ -401,14 +401,14 @@ function SearchPageClient() {
                                     }
                                     year={item.year}
                                     from="search"
-                                    type={item.episodes.length > 1 ? 'tv' : 'movie'}
+                                    type={item.episodes?.length > 1 ? 'tv' : 'movie'}
                                   />
                                 </div>
                               )),
                             )}
                     </VideoGridContainer>
 
-                    {searchResults.length === 0 && <Empty />}
+                    {searchResults?.length === 0 && <Empty />}
                   </section>
                 )
               : null}

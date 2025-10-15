@@ -77,7 +77,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeView }) => {
     const runtimeConfig = window.RUNTIME_CONFIG
     if (
       runtimeConfig?.CUSTOM_CATEGORIES
-      && runtimeConfig.CUSTOM_CATEGORIES.length > 0
+      && runtimeConfig.CUSTOM_CATEGORIES?.length > 0
     ) {
       setNavItems(prevItems => [
         ...prevItems,

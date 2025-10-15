@@ -8,11 +8,11 @@ module.exports = {
       HOSTNAME: '0.0.0.0',
       PASSWORD: process.env.PASSWORD || '1234',
       NEXT_PUBLIC_IMAGE_PROXY: process.env.NEXT_PUBLIC_IMAGE_PROXY || '/api/image-proxy?url=',
-      NEXT_PUBLIC_STORAGE_TYPE: process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage'
+      NEXT_PUBLIC_STORAGE_TYPE: process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage',
     },
     instances: 1,
     autorestart: true,
     watch: false,
-    max_memory_restart: '1G'
-  }]
+    max_memory_restart: '1G',
+  }],
 }
