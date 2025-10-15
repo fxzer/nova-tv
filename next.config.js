@@ -13,6 +13,7 @@ const nextConfig = {
   env: {
     PASSWORD: process.env.PASSWORD,
     NEXT_PUBLIC_STORAGE_TYPE: process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage',
+    NEXT_PUBLIC_IMAGE_PROXY: process.env.NEXT_PUBLIC_IMAGE_PROXY || '/api/image-proxy?url=',
   },
 
   reactStrictMode: true,
@@ -28,6 +29,13 @@ const nextConfig = {
         protocol: 'http',
         hostname: '**',
       },
+    ],
+    domains: [
+      'img1.doubanio.com',
+      'img2.doubanio.com',
+      'img3.doubanio.com',
+      'img9.doubanio.com',
+      'movie.douban.com',
     ],
   },
 

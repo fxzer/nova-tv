@@ -34,11 +34,31 @@ export function processImageUrl(originalUrl: string): string {
   if (!originalUrl)
     return originalUrl
 
+  // 如果是豆瓣图片，优先使用内置代理
+  if (isDoubanImage(originalUrl)) {
+    return `/api/image-proxy?url=${encodeURIComponent(originalUrl)}`
+  }
+
   const proxyUrl = getImageProxyUrl()
   if (!proxyUrl)
     return originalUrl
 
   return `${proxyUrl}${encodeURIComponent(originalUrl)}`
+}
+
+/**
+ * 检查是否为豆瓣图片
+ */
+function isDoubanImage(url: string): boolean {
+  if (!url)
+    return false
+  try {
+    const urlObj = new URL(url)
+    return urlObj.hostname.includes('doubanio.com') || urlObj.hostname.includes('douban.com')
+  }
+  catch {
+    return false
+  }
 }
 
 /**
