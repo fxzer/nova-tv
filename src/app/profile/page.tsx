@@ -65,7 +65,7 @@ export default function ProfilePage() {
         const status = await checkForUpdates()
         setUpdateStatus(status)
       }
-      catch (error) {
+      catch {
         // 忽略版本检查失败
       }
       finally {
@@ -86,7 +86,7 @@ export default function ProfilePage() {
         setFavoritesCount(Object.keys(allFavorites).length)
         setWatchHistoryCount(Object.keys(allPlayRecords).length)
       }
-      catch (error) {
+      catch {
         // 忽略获取数据数量失败
       }
     }
@@ -122,7 +122,7 @@ export default function ProfilePage() {
         headers: { 'Content-Type': 'application/json' },
       })
     }
-    catch (error) {
+    catch {
       // 忽略注销请求失败
     }
     window.location.href = '/'
@@ -199,8 +199,8 @@ export default function ProfilePage() {
                       (authInfo?.role || 'user') === 'owner'
                         ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
                         : (authInfo?.role || 'user') === 'admin'
-                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                          : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                            : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                     }`}
                   >
                     {getRoleText(authInfo?.role || 'user')}

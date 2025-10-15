@@ -31,6 +31,7 @@ nova-tv 在原版 MoonTV 基础上进行了全面优化和增强，主要包括�
 ## ✨ 功能特性
 
 ### 🔥 核心功能
+
 - 🔍 **多源聚合搜索**：内置数十个免费资源站点，一次搜索立刻返回全源结果
 - 📄 **丰富详情页**：支持剧集列表、演员、年份、简介等完整信息展示
 - ▶️ **流畅在线播放**：集成 HLS.js & ArtPlayer，支持多种视频格式
@@ -40,6 +41,7 @@ nova-tv 在原版 MoonTV 基础上进行了全面优化和增强，主要包括�
 - 👿 **智能去广告**：自动跳过视频中的切片广告（实验性）
 
 ### 🆕 nova-tv 特色优化
+
 - 🎨 **现代化 UI 组件**：全新设计的视频卡片、空状态页面和加载动画
 - 📊 **增强的视频信息展示**：视频卡片显示年份、评分、集数等详细信息
 - 🖼️ **图片懒加载优化**：提升页面加载速度，减少带宽消耗
@@ -72,15 +74,15 @@ nova-tv 在原版 MoonTV 基础上进行了全面优化和增强，主要包括�
 
 ## 🛠 技术栈
 
-| 分类      | 主要依赖                                                                                              |
-| --------- | ----------------------------------------------------------------------------------------------------- |
-| 前端框架  | [Next.js 15.5.5](https://nextjs.org/) · App Router · React 19.2.0                                    |
-| UI & 样式 | [Tailwind&nbsp;CSS v4](https://tailwindcss.com/) · Framer Motion · Lucide React                        |
-| 语言      | TypeScript 5.9                                                                                        |
+| 分类      | 主要依赖                                                                                                         |
+| --------- | ---------------------------------------------------------------------------------------------------------------- |
+| 前端框架  | [Next.js 15.5.5](https://nextjs.org/) · App Router · React 19.2.0                                                |
+| UI & 样式 | [Tailwind&nbsp;CSS v4](https://tailwindcss.com/) · Framer Motion · Lucide React                                  |
+| 语言      | TypeScript 5.9                                                                                                   |
 | 播放器    | [ArtPlayer](https://github.com/zhw2590582/ArtPlayer) · [HLS.js](https://github.com/video-dev/hls.js/) · VidStack |
-| 状态管理  | [TanStack Query](https://tanstack.com/query) · Zod                                                    |
-| 代码质量  | @antfu/eslint-config · ESLint · Husky · Lint-staged                                                   |
-| 部署      | Docker · Vercel · CloudFlare pages                                                                    |
+| 状态管理  | [TanStack Query](https://tanstack.com/query) · Zod                                                               |
+| 代码质量  | @antfu/eslint-config · ESLint · Husky · Lint-staged                                                              |
+| 部署      | Docker · Vercel · CloudFlare pages                                                                               |
 
 ## 部署
 
@@ -232,7 +234,7 @@ networks:
 | --------------------------------- | -------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | USERNAME                          | 非 localstorage 部署时的管理员账号           | 任意字符串                       | （空）                                                                                                                     |
 | PASSWORD                          | 非 localstorage 部署时为管理员密码           | 任意字符串                       | （空）                                                                                                                     |
-| SITE_NAME                         | 站点名称                                     | 任意字符串                       | nova-tv                                                                                                                     |
+| SITE_NAME                         | 站点名称                                     | 任意字符串                       | nova-tv                                                                                                                    |
 | ANNOUNCEMENT                      | 站点公告                                     | 任意字符串                       | 本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。 |
 | NEXT_PUBLIC_STORAGE_TYPE          | 播放记录/收藏的存储方式                      | localstorage、redis、d1、upstash | localstorage                                                                                                               |
 | REDIS_URL                         | redis 连接 url                               | 连接 url                         | 空                                                                                                                         |
@@ -310,6 +312,7 @@ nova-tv 支持标准的苹果 CMS V10 API 格式。
 ## 🗺️ Roadmap
 
 ### 已完成功能 ✅
+
 - [x] 深色模式支持
 - [x] 持久化存储（本地/云端）
 - [x] 多账户系统
@@ -322,6 +325,7 @@ nova-tv 支持标准的苹果 CMS V10 API 格式。
 - [x] 技术栈升级到最新版本
 
 ### 计划功能 📋
+
 - [ ] 更多视频播放器选项
 - [ ] 个性化推荐系统
 - [ ] 字幕下载与支持
@@ -359,10 +363,12 @@ nova-tv 支持标准的苹果 CMS V10 API 格式。
 ## 🙏 致谢
 
 ### 原始项目
+
 - [MoonTV](https://github.com/samqin123/MoonTV) - 本项目基于 MoonTV 进行深度优化改进
 - [LibreTV](https://github.com/LibreSpark/LibreTV) - 提供了优秀的设计灵感和技术参考
 
 ### 技术栈与工具
+
 - [ts-nextjs-tailwind-starter](https://github.com/theodorusclarence/ts-nextjs-tailwind-starter) - 项目最初基于该脚手架
 - [Next.js](https://nextjs.org/) - 强大的 React 全栈框架
 - [Tailwind CSS](https://tailwindcss.com/) - 优秀的 CSS 框架
@@ -371,6 +377,7 @@ nova-tv 支持标准的苹果 CMS V10 API 格式。
 - [VidStack](https://vidstack.dev/) - 现代化的媒体播放器框架
 
 ### 特别感谢
+
 - 感谢所有提供免费影视接口的站点
 - 感谢所有为开源社区做出贡献的开发者们
 - 感谢 Anthony Fu 的优秀 ESLint 配置 (@antfu/eslint-config)

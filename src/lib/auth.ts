@@ -14,11 +14,18 @@ export function getAuthInfoFromCookie(request: NextRequest): {
   }
 
   try {
-    const decoded = decodeURIComponent(authCookie.value)
+    // 处理可能的双重编码
+    let decoded = decodeURIComponent(authCookie.value)
+
+    // 如果解码后仍然包含 %，说明是双重编码，需要再次解码
+    if (decoded.includes('%')) {
+      decoded = decodeURIComponent(decoded)
+    }
+
     const authData = JSON.parse(decoded)
     return authData
   }
-  catch (error) {
+  catch {
     return null
   }
 }
@@ -71,7 +78,7 @@ export function getAuthInfoFromBrowserCookie(): {
     const authData = JSON.parse(decoded)
     return authData
   }
-  catch (error) {
+  catch {
     return null
   }
 }

@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server'
 import type { IStorage } from '@/lib/types'
 
+import process from 'node:process'
 import { NextResponse } from 'next/server'
 import { getAuthInfoFromCookie } from '@/lib/auth'
 import { getStorage } from '@/lib/db'
@@ -37,7 +38,6 @@ export async function POST(request: NextRequest) {
 
     const username = authInfo.username
 
-    // 不允许站长修改密码（站长用户名等于 process.env.USERNAME）
     if (username === process.env.USERNAME) {
       return NextResponse.json(
         { error: '站长不能通过此接口修改密码' },

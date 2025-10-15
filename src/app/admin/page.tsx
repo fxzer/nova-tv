@@ -188,7 +188,42 @@ function UserConfig({ config, role, refreshConfig }: UserConfigProps) {
       setUserSettings(prev => ({ ...prev, enableRegistration: !value }))
     }
   }
+  // 通用请求函数
+  const handleUserAction = async (
+    action:
+      | 'add'
+      | 'ban'
+      | 'unban'
+      | 'setAdmin'
+      | 'cancelAdmin'
+      | 'changePassword'
+      | 'deleteUser',
+    targetUsername: string,
+    targetPassword?: string,
+  ) => {
+    try {
+      const res = await fetch('/api/admin/user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          targetUsername,
+          ...(targetPassword ? { targetPassword } : {}),
+          action,
+        }),
+      })
 
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || `操作失败: ${res.status}`)
+      }
+
+      // 成功后刷新配置（无需整页刷新）
+      await refreshConfig()
+    }
+    catch (err) {
+      showError(err instanceof Error ? err.message : '操作失败')
+    }
+  }
   const handleBanUser = async (uname: string) => {
     await handleUserAction('ban', uname)
   }
@@ -246,43 +281,6 @@ function UserConfig({ config, role, refreshConfig }: UserConfigProps) {
       return
 
     await handleUserAction('deleteUser', username)
-  }
-
-  // 通用请求函数
-  const handleUserAction = async (
-    action:
-      | 'add'
-      | 'ban'
-      | 'unban'
-      | 'setAdmin'
-      | 'cancelAdmin'
-      | 'changePassword'
-      | 'deleteUser',
-    targetUsername: string,
-    targetPassword?: string,
-  ) => {
-    try {
-      const res = await fetch('/api/admin/user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          targetUsername,
-          ...(targetPassword ? { targetPassword } : {}),
-          action,
-        }),
-      })
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.error || `操作失败: ${res.status}`)
-      }
-
-      // 成功后刷新配置（无需整页刷新）
-      await refreshConfig()
-    }
-    catch (err) {
-      showError(err instanceof Error ? err.message : '操作失败')
-    }
   }
 
   if (!config) {
@@ -594,22 +592,22 @@ function UserConfig({ config, role, refreshConfig }: UserConfigProps) {
                               {user.role !== 'owner'
                                 && (!user.banned
                                   ? (
-                                    <button
-                                      onClick={() => handleBanUser(user.username)}
-                                      className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:hover:bg-red-900/60 dark:text-red-300 transition-colors"
-                                    >
-                                      封禁
-                                    </button>
-                                  )
+                                      <button
+                                        onClick={() => handleBanUser(user.username)}
+                                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:hover:bg-red-900/60 dark:text-red-300 transition-colors"
+                                      >
+                                        封禁
+                                      </button>
+                                    )
                                   : (
-                                    <button
-                                      onClick={() =>
-                                        handleUnbanUser(user.username)}
-                                      className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/40 dark:hover:bg-green-900/60 dark:text-green-300 transition-colors"
-                                    >
-                                      解封
-                                    </button>
-                                  ))}
+                                      <button
+                                        onClick={() =>
+                                          handleUnbanUser(user.username)}
+                                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/40 dark:hover:bg-green-900/60 dark:text-green-300 transition-colors"
+                                      >
+                                        解封
+                                      </button>
+                                    ))}
                             </>
                           )}
                           {/* 删除用户按钮 - 放在最后，使用更明显的红色样式 */}
@@ -1187,8 +1185,8 @@ function CategoryConfig({
               isD1Storage || isUpstashStorage
                 ? 'bg-gray-400 cursor-not-allowed text-white'
                 : !category.disabled
-                  ? 'bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
-                  : 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
+                    ? 'bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
+                    : 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
             } transition-colors`}
           >
             {!category.disabled ? '禁用' : '启用'}

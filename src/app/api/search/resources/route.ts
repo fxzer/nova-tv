@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { getAvailableApiSites, getCacheTime } from '@/lib/config'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 // OrionTV 兼容接口
 export async function GET() {
@@ -18,7 +18,7 @@ export async function GET() {
       },
     })
   }
-  catch (error) {
+  catch {
     return NextResponse.json({ error: '获取资源失败' }, { status: 500 })
   }
 }

@@ -1,6 +1,7 @@
 import type { AdminConfig } from './admin.types'
 
 import type { Favorite, IStorage, PlayRecord, SkipConfig } from './types'
+import process from 'node:process'
 import { Redis } from '@upstash/redis'
 
 // 搜索历史最大条数
@@ -35,7 +36,7 @@ async function withRetry<T>(
           || err.name === 'UpstashError'
 
       if (isConnectionError && !isLastAttempt) {
-        console.log(
+        console.warn(
           `Upstash Redis operation failed, retrying... (${i + 1}/${maxRetries})`,
         )
         console.error('Error:', err.message)
@@ -351,7 +352,7 @@ export class UpstashRedisStorage implements IStorage {
 // 单例 Upstash Redis 客户端
 function getUpstashRedisClient(): Redis {
   const globalKey = Symbol.for('__MOONTV_UPSTASH_REDIS_CLIENT__')
-  let client: Redis | undefined = (global as any)[globalKey]
+  let client: Redis | undefined = (globalThis as any)[globalKey]
 
   if (!client) {
     const upstashUrl = process.env.UPSTASH_URL
@@ -375,9 +376,9 @@ function getUpstashRedisClient(): Redis {
       },
     })
 
-    console.log('Upstash Redis client created successfully');
+    console.warn('Upstash Redis client created successfully');
 
-    (global as any)[globalKey] = client
+    (globalThis as any)[globalKey] = client
   }
 
   return client

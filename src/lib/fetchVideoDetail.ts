@@ -37,7 +37,7 @@ export async function fetchVideoDetail({
         return exactMatch
       }
     }
-    catch (error) {
+    catch {
       // do nothing
     }
   }

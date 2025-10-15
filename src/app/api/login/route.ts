@@ -1,10 +1,11 @@
 import type { NextRequest } from 'next/server'
+import process from 'node:process'
 import { NextResponse } from 'next/server'
 
 import { getConfig } from '@/lib/config'
 import { db } from '@/lib/db'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 // 读取存储类型环境变量，默认 localstorage
 const STORAGE_TYPE

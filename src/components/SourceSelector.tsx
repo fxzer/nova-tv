@@ -1,5 +1,6 @@
 import type { SearchResult } from '@/lib/types'
 import { AnimatePresence, Reorder } from 'framer-motion'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -58,9 +59,10 @@ const ImageWithErrorFallback: React.FC<ImageWithErrorFallbackProps> = ({
           </svg>
         </div>
       )}
-      <img
+      <Image
         src={src}
         alt={alt}
+        fill
         className={`${className} ${
           isLoading ? 'opacity-0' : 'opacity-100'
         } transition-opacity duration-300`}
@@ -69,6 +71,7 @@ const ImageWithErrorFallback: React.FC<ImageWithErrorFallbackProps> = ({
           setIsLoading(false)
           setHasError(true)
         }}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
     </div>
   )
@@ -160,7 +163,7 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
       const info = await getVideoResolutionFromM3u8(episodeUrl)
       setVideoInfoMap(prev => new Map(prev).set(sourceKey, info))
     }
-    catch (error) {
+    catch {
       // 失败时保存错误状态
       setVideoInfoMap(prev =>
         new Map(prev).set(sourceKey, {
@@ -359,31 +362,33 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
                         >
                           {/* 封面 */}
                           <div className="flex-shrink-0 h-20 aspect-[2/3]  bg-gray-200 dark:bg-gray-700 rounded overflow-hidden relative">
-                            {source.episodes && source.episodes.length > 0 ? (
-                              <ImageWithErrorFallback
-                                src={processImageUrl(source.poster)}
-                                alt={source.title}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
+                            {source.episodes && source.episodes.length > 0
+                              ? (
+                                  <ImageWithErrorFallback
+                                    src={processImageUrl(source.poster)}
+                                    alt={source.title}
+                                    className="w-full h-full object-cover"
+                                  />
+                                )
+                              : (
                             // 无封面时的默认占位符
-                              <div className="w-full h-full flex items-center justify-center">
-                                <svg
-                                  className="w-6 h-6 text-gray-400 dark:text-gray-500"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                  >
-                                  </path>
-                                </svg>
-                              </div>
-                            )}
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <svg
+                                      className="w-6 h-6 text-gray-400 dark:text-gray-500"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                      >
+                                      </path>
+                                    </svg>
+                                  </div>
+                                )}
                           </div>
 
                           {/* 信息区域 */}

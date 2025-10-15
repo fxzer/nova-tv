@@ -165,42 +165,6 @@ function SearchPageClient() {
     }
   }, [])
 
-  useEffect(() => {
-    // 当搜索参数变化时更新搜索状态
-    const query = searchParams.get('q')
-    if (query) {
-      fetchSearchResults(query)
-    }
-    else {
-      setShowResults(false)
-      setSearchResults([])
-    }
-  }, [searchParams])
-
-  // 组件卸载时取消所有未完成的搜索请求
-  useEffect(() => {
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort()
-      }
-    }
-  }, [])
-
-  // 当搜索结果更新时，默认选中第一个分组
-  useEffect(() => {
-    if (groupedResults.length > 0) {
-      // 检查当前选中的分组是否在新的结果中
-      const currentGroupExists = groupedResults.some(
-        ([typeName]) => typeName === selectedGroup,
-      )
-
-      // 如果当前选中的分组不存在，或者没有选中任何分组，则选择第一个分组
-      if (!currentGroupExists || !selectedGroup) {
-        setSelectedGroup(groupedResults[0][0])
-      }
-    }
-  }, [groupedResults, selectedGroup])
-
   const fetchSearchResults = async (query: string) => {
     // 取消之前的搜索请求
     if (abortControllerRef.current) {
@@ -295,6 +259,41 @@ function SearchPageClient() {
       }
     }
   }
+  useEffect(() => {
+    // 当搜索参数变化时更新搜索状态
+    const query = searchParams.get('q')
+    if (query) {
+      fetchSearchResults(query)
+    }
+    else {
+      setShowResults(false)
+      setSearchResults([])
+    }
+  }, [searchParams])
+
+  // 组件卸载时取消所有未完成的搜索请求
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+    }
+  }, [])
+
+  // 当搜索结果更新时，默认选中第一个分组
+  useEffect(() => {
+    if (groupedResults.length > 0) {
+      // 检查当前选中的分组是否在新的结果中
+      const currentGroupExists = groupedResults.some(
+        ([typeName]) => typeName === selectedGroup,
+      )
+
+      // 如果当前选中的分组不存在，或者没有选中任何分组，则选择第一个分组
+      if (!currentGroupExists || !selectedGroup) {
+        setSelectedGroup(groupedResults[0][0])
+      }
+    }
+  }, [groupedResults, selectedGroup])
 
   // 返回顶部功能
   const scrollToTop = () => {
@@ -305,7 +304,7 @@ function SearchPageClient() {
         behavior: 'smooth',
       })
     }
-    catch (error) {
+    catch {
       // 如果平滑滚动完全失败，使用立即滚动
       document.body.scrollTop = 0
     }
@@ -316,102 +315,103 @@ function SearchPageClient() {
       <div className="px-4 sm:px-10 py-4 sm:py-8 overflow-visible mb-10">
         {/* 搜索结果或搜索历史 */}
         <div className="max-w-[95%] mx-auto overflow-visible">
-          {isLoading ? (
-            <SearchSkeleton />
-          ) : showResults ? (
-            <section>
-              {/* 标题 + 聚合开关 */}
-              <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-                  搜索结果
-                </h2>
-                {/* 聚合开关 */}
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <span className="text-sm text-gray-700 dark:text-gray-300">
-                    聚合
-                  </span>
-                  <div className="relative">
-                    <input
-                      type="checkbox"
-                      className="sr-only peer"
-                      checked={viewMode === 'agg'}
-                      onChange={() =>
-                        setViewMode(viewMode === 'agg' ? 'all' : 'agg')}
+          {isLoading
+            ? <SearchSkeleton />
+            : showResults
+              ? (
+                  <section>
+                    <div className="mb-6 flex items-center justify-between">
+                      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
+                        搜索结果
+                      </h2>
+                      {/* 聚合开关 */}
+                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          聚合
+                        </span>
+                        <div className="relative">
+                          <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={viewMode === 'agg'}
+                            onChange={() =>
+                              setViewMode(viewMode === 'agg' ? 'all' : 'agg')}
+                          />
+                          <div className="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600"></div>
+                          <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+                        </div>
+                      </label>
+                    </div>
+
+                    {/* 横向导航菜单 */}
+                    <SearchNavigation
+                      groupedData={
+                        viewMode === 'agg'
+                          ? aggregatedResults
+                          : groupedResults.map(([typeName, items]) => ({
+                              typeName,
+                              items,
+                            }))
+                      }
+                      selectedGroup={selectedGroup}
+                      onGroupSelect={setSelectedGroup}
+                      viewMode={viewMode}
                     />
-                    <div className="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600"></div>
-                    <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
-                  </div>
-                </label>
-              </div>
 
-              {/* 横向导航菜单 */}
-              <SearchNavigation
-                groupedData={
-                  viewMode === 'agg'
-                    ? aggregatedResults
-                    : groupedResults.map(([typeName, items]) => ({
-                      typeName,
-                      items,
-                    }))
-                }
-                selectedGroup={selectedGroup}
-                onGroupSelect={setSelectedGroup}
-                viewMode={viewMode}
-              />
+                    {/* 当前选中分组的内容 */}
+                    <VideoGridContainer>
+                      {viewMode === 'agg'
+                        ? aggregatedResults
+                            .filter(({ typeName }) => typeName === selectedGroup)
+                            .flatMap(({ groups }) =>
+                              groups.map(([mapKey, group]) => (
+                                <div key={mapKey} className="w-full">
+                                  <VideoCard
+                                    from="search"
+                                    items={group}
+                                    query={
+                                      group[0].title !== searchParams.get('q')?.trim()
+                                        ? searchParams.get('q')?.trim() || ''
+                                        : ''
+                                    }
+                                  />
+                                </div>
+                              )),
+                            )
+                        : groupedResults
+                            .filter(([typeName]) => typeName === selectedGroup)
+                            .flatMap(([typeName, items]) =>
+                              items.map(item => (
+                                <div
+                                  key={`${typeName}-${item.source}-${item.id}`}
+                                  className="w-full"
+                                >
+                                  <VideoCard
+                                    id={item.id}
+                                    title={`${item.title} ${item.type_name}`}
+                                    poster={item.poster}
+                                    episodes={item.episodes.length}
+                                    source={item.source}
+                                    source_name={item.source_name}
+                                    douban_id={item.douban_id?.toString()}
+                                    query={
+                                      item.title !== searchParams.get('q')?.trim()
+                                        ? searchParams.get('q')?.trim() || ''
+                                        : ''
+                                    }
+                                    year={item.year}
+                                    from="search"
+                                    type={item.episodes.length > 1 ? 'tv' : 'movie'}
+                                  />
+                                </div>
+                              )),
+                            )}
+                    </VideoGridContainer>
 
-              {/* 当前选中分组的内容 */}
-              <VideoGridContainer>
-                {viewMode === 'agg'
-                  ? aggregatedResults
-                    .filter(({ typeName }) => typeName === selectedGroup)
-                    .flatMap(({ groups }) =>
-                      groups.map(([mapKey, group]) => (
-                        <div key={mapKey} className="w-full">
-                          <VideoCard
-                            from="search"
-                            items={group}
-                            query={
-                              group[0].title !== searchParams.get('q')?.trim()
-                                ? searchParams.get('q')?.trim() || ''
-                                : ''
-                            }
-                          />
-                        </div>
-                      )),
-                    )
-                  : groupedResults
-                    .filter(([typeName]) => typeName === selectedGroup)
-                    .flatMap(([typeName, items]) =>
-                      items.map(item => (
-                        <div
-                          key={`${typeName}-${item.source}-${item.id}`}
-                          className="w-full"
-                        >
-                          <VideoCard
-                            id={item.id}
-                            title={`${item.title} ${item.type_name}`}
-                            poster={item.poster}
-                            episodes={item.episodes.length}
-                            source={item.source}
-                            source_name={item.source_name}
-                            douban_id={item.douban_id?.toString()}
-                            query={
-                              item.title !== searchParams.get('q')?.trim()
-                                ? searchParams.get('q')?.trim() || ''
-                                : ''
-                            }
-                            year={item.year}
-                            from="search"
-                            type={item.episodes.length > 1 ? 'tv' : 'movie'}
-                          />
-                        </div>
-                      )),
-                    )}
-              </VideoGridContainer>
-
-              {searchResults.length === 0 && <Empty />}
-            </section>
-          ) : null}
+                    {searchResults.length === 0 && <Empty />}
+                  </section>
+                )
+              : null}
         </div>
       </div>
 

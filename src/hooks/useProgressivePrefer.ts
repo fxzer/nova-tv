@@ -127,7 +127,7 @@ export function useProgressivePrefer() {
                 testResult,
               }
             }
-            catch (error) {
+            catch {
               return null
             }
           }),

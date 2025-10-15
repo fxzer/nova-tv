@@ -53,11 +53,11 @@ export function ThemeToggle() {
     >
       {resolvedTheme === 'dark'
         ? (
-          <Sun className="w-full h-full" />
-        )
+            <Sun className="w-full h-full" />
+          )
         : (
-          <Moon className="w-full h-full" />
-        )}
+            <Moon className="w-full h-full" />
+          )}
     </button>
   )
 }

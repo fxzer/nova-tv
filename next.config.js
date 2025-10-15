@@ -1,3 +1,4 @@
+import process from 'node:process'
 /** @type {import('next').NextConfig} */
 import withPWA from 'next-pwa'
 
@@ -5,6 +6,11 @@ const nextConfig = {
   output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true,
+  },
+
+  env: {
+    PASSWORD: process.env.PASSWORD,
+    NEXT_PUBLIC_STORAGE_TYPE: process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage',
   },
 
   reactStrictMode: true,

@@ -256,8 +256,8 @@ export const UserMenu: React.FC = () => {
                   (authInfo?.role || 'user') === 'owner'
                     ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
                     : (authInfo?.role || 'user') === 'admin'
-                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                      : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                        : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                 }`}
               >
                 {getRoleText(authInfo?.role || 'user')}

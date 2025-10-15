@@ -2,6 +2,7 @@ import type { RedisClientType } from 'redis'
 import type { AdminConfig } from './admin.types'
 
 import type { Favorite, IStorage, PlayRecord, SkipConfig } from './types'
+import process from 'node:process'
 import { createClient } from 'redis'
 
 // 搜索历史最大条数
@@ -35,7 +36,7 @@ async function withRetry<T>(
           || err.code === 'EPIPE'
 
       if (isConnectionError && !isLastAttempt) {
-        console.log(
+        console.warn(
           `Redis operation failed, retrying... (${i + 1}/${maxRetries})`,
         )
         console.error('Error:', err.message)
@@ -372,7 +373,7 @@ export class RedisStorage implements IStorage {
 // 单例 Redis 客户端
 function getRedisClient(): RedisClientType {
   const globalKey = Symbol.for('__MOONTV_REDIS_CLIENT__')
-  let client: RedisClientType | undefined = (global as any)[globalKey]
+  let client: RedisClientType | undefined = (globalThis as any)[globalKey]
 
   if (!client) {
     const url = process.env.REDIS_URL
@@ -386,7 +387,7 @@ function getRedisClient(): RedisClientType {
       socket: {
         // 重连策略：指数退避，最大30秒
         reconnectStrategy: (retries: number) => {
-          console.log(`Redis reconnection attempt ${retries + 1}`)
+          console.warn(`Redis reconnection attempt ${retries + 1}`)
           if (retries > 10) {
             console.error('Redis max reconnection attempts exceeded')
             return false // 停止重连
@@ -407,33 +408,33 @@ function getRedisClient(): RedisClientType {
     })
 
     client.on('connect', () => {
-      console.log('Redis connected')
+      console.warn('Redis connected')
     })
 
     client.on('reconnecting', () => {
-      console.log('Redis reconnecting...')
+      console.warn('Redis reconnecting...')
     })
 
     client.on('ready', () => {
-      console.log('Redis ready')
+      console.warn('Redis ready')
     })
 
     // 初始连接，带重试机制
     const connectWithRetry = async () => {
       try {
         await client!.connect()
-        console.log('Redis connected successfully')
+        console.warn('Redis connected successfully')
       }
       catch (err) {
         console.error('Redis initial connection failed:', err)
-        console.log('Will retry in 5 seconds...')
+        console.warn('Will retry in 5 seconds...')
         setTimeout(connectWithRetry, 5000)
       }
     }
 
     connectWithRetry();
 
-    (global as any)[globalKey] = client
+    (globalThis as any)[globalKey] = client
   }
 
   return client

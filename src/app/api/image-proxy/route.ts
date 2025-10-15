@@ -53,7 +53,7 @@ export async function GET(request: Request) {
       headers,
     })
   }
-  catch (error) {
+  catch {
     return NextResponse.json(
       { error: 'Error fetching image' },
       { status: 500 },

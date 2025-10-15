@@ -4,7 +4,7 @@ import { getCacheTime, getConfig } from '@/lib/config'
 import { searchFromApi } from '@/lib/downstream'
 import { yellowWords } from '@/lib/yellow'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -50,7 +50,7 @@ export async function GET(request: Request) {
       },
     )
   }
-  catch (error) {
+  catch {
     return NextResponse.json({ error: '搜索失败' }, { status: 500 })
   }
 }

@@ -1,5 +1,6 @@
 import type { AdminConfig } from './admin.types'
 import type { Favorite, IStorage, PlayRecord, SkipConfig } from './types'
+import process from 'node:process'
 
 // 搜索历史最大条数
 const SEARCH_HISTORY_LIMIT = 20

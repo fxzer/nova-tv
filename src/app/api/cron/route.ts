@@ -1,16 +1,17 @@
 import type { NextRequest } from 'next/server'
 import type { SearchResult } from '@/lib/types'
 
+import process from 'node:process'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { fetchVideoDetail } from '@/lib/fetchVideoDetail'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
-  console.log(request.url)
+  console.warn(request.url)
   try {
-    console.log('Cron job triggered:', new Date().toISOString())
+    console.warn('Cron job triggered:', new Date().toISOString())
 
     refreshRecordAndFavorites()
 
@@ -39,7 +40,7 @@ async function refreshRecordAndFavorites() {
   if (
     (process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage') === 'localstorage'
   ) {
-    console.log('跳过刷新：当前使用 localstorage 存储模式')
+    console.warn('跳过刷新：当前使用 localstorage 存储模式')
     return
   }
 
@@ -80,7 +81,7 @@ async function refreshRecordAndFavorites() {
     }
 
     for (const user of users) {
-      console.log(`开始处理用户: ${user}`)
+      console.warn(`开始处理用户: ${user}`)
 
       // 播放记录
       try {
@@ -116,7 +117,7 @@ async function refreshRecordAndFavorites() {
                 save_time: record.save_time,
                 search_title: record.search_title,
               })
-              console.log(
+              console.warn(
                 `更新播放记录: ${record.title} (${record.total_episodes} -> ${episodeCount})`,
               )
             }
@@ -129,7 +130,7 @@ async function refreshRecordAndFavorites() {
           }
         }
 
-        console.log(`播放记录处理完成: ${processedRecords}/${totalRecords}`)
+        console.warn(`播放记录处理完成: ${processedRecords}/${totalRecords}`)
       }
       catch (err) {
         console.error(`获取用户播放记录失败 (${user}):`, err)
@@ -166,7 +167,7 @@ async function refreshRecordAndFavorites() {
                 save_time: fav.save_time,
                 search_title: fav.search_title,
               })
-              console.log(
+              console.warn(
                 `更新收藏: ${fav.title} (${fav.total_episodes} -> ${favEpisodeCount})`,
               )
             }
@@ -179,14 +180,14 @@ async function refreshRecordAndFavorites() {
           }
         }
 
-        console.log(`收藏处理完成: ${processedFavorites}/${totalFavorites}`)
+        console.warn(`收藏处理完成: ${processedFavorites}/${totalFavorites}`)
       }
       catch (err) {
         console.error(`获取用户收藏失败 (${user}):`, err)
       }
     }
 
-    console.log('刷新播放记录/收藏任务完成')
+    console.warn('刷新播放记录/收藏任务完成')
   }
   catch (err) {
     console.error('刷新播放记录/收藏任务启动失败', err)

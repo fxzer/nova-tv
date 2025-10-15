@@ -165,7 +165,7 @@ export async function searchFromApi(
               }
             })
           }
-          catch (error) {
+          catch {
             return []
           }
         })()
@@ -186,7 +186,7 @@ export async function searchFromApi(
 
     return results
   }
-  catch (error) {
+  catch {
     return []
   }
 }

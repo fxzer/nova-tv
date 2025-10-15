@@ -4,7 +4,7 @@ import { getCacheTime, getConfig } from '@/lib/config'
 import { searchFromApi } from '@/lib/downstream'
 import { yellowWords } from '@/lib/yellow'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 // OrionTV 兼容接口
 export async function GET(request: Request) {
@@ -74,7 +74,7 @@ export async function GET(request: Request) {
       )
     }
   }
-  catch (error) {
+  catch {
     return NextResponse.json(
       {
         error: '搜索失败',

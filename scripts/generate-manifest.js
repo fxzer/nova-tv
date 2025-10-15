@@ -1,35 +1,36 @@
 #!/usr/bin/env node
- 
+
 // 根据 SITE_NAME 动态生成 manifest.json
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs'
+import path from 'node:path'
+import process from 'node:process'
+import { fileURLToPath } from 'node:url'
 
 // Get __dirname equivalent in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // 获取项目根目录
-const projectRoot = path.resolve(__dirname, '..');
-const publicDir = path.join(projectRoot, 'public');
-const manifestPath = path.join(publicDir, 'manifest.json');
+const projectRoot = path.resolve(__dirname, '..')
+const publicDir = path.join(projectRoot, 'public')
+const manifestPath = path.join(publicDir, 'manifest.json')
 
 // 从环境变量获取站点名称
-const siteName = process.env.SITE_NAME || 'nova-tv';
+const siteName = process.env.SITE_NAME || 'nova-tv'
 
 // manifest.json 模板
 const manifestTemplate = {
-  name: siteName,
-  short_name: siteName,
-  description: '影视聚合',
-  start_url: '/',
-  scope: '/',
-  display: 'standalone',
-  background_color: '#000000',
+  'name': siteName,
+  'short_name': siteName,
+  'description': '影视聚合',
+  'start_url': '/',
+  'scope': '/',
+  'display': 'standalone',
+  'background_color': '#000000',
   'apple-mobile-web-app-capable': 'yes',
   'apple-mobile-web-app-status-bar-style': 'black',
-  icons: [
+  'icons': [
     {
       src: '/icons/icon-192x192.png',
       sizes: '192x192',
@@ -51,18 +52,19 @@ const manifestTemplate = {
       type: 'image/png',
     },
   ],
-};
+}
 
 try {
   // 确保 public 目录存在
   if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true });
+    fs.mkdirSync(publicDir, { recursive: true })
   }
 
   // 写入 manifest.json
-  fs.writeFileSync(manifestPath, JSON.stringify(manifestTemplate, null, 2));
-  console.log(`✅ Generated manifest.json with site name: ${siteName}`);
-} catch (error) {
-  console.error('❌ Error generating manifest.json:', error);
-  process.exit(1);
+  fs.writeFileSync(manifestPath, JSON.stringify(manifestTemplate, null, 2))
+  console.warn(`✅ Generated manifest.json with site name: ${siteName}`)
+}
+catch (error) {
+  console.error('❌ Error generating manifest.json:', error)
+  process.exit(1)
 }

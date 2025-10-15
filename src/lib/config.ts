@@ -1,4 +1,5 @@
 import type { AdminConfig } from './admin.types'
+import process from 'node:process'
 
 import { getStorage } from '@/lib/db'
 import runtimeConfig from './runtime'
@@ -52,14 +53,13 @@ async function initConfig() {
   }
 
   if (process.env.DOCKER_ENV === 'true') {
-    const _require = eval('require') as NodeRequire
-    const fs = _require('fs') as typeof import('fs')
-    const path = _require('path') as typeof import('path')
+    const fs = await import('node:fs')
+    const path = await import('node:path')
 
     const configPath = path.join(process.cwd(), 'config.json')
     const raw = fs.readFileSync(configPath, 'utf-8')
     fileConfig = JSON.parse(raw) as ConfigFileStruct
-    console.log('load dynamic config success')
+    console.warn('load dynamic config success')
   }
   else {
     // 默认使用编译时生成的配置
@@ -404,14 +404,13 @@ export async function resetConfig() {
   }
 
   if (process.env.DOCKER_ENV === 'true') {
-    const _require = eval('require') as NodeRequire
-    const fs = _require('fs') as typeof import('fs')
-    const path = _require('path') as typeof import('path')
+    const fs = await import('node:fs')
+    const path = await import('node:path')
 
     const configPath = path.join(process.cwd(), 'config.json')
     const raw = fs.readFileSync(configPath, 'utf-8')
     fileConfig = JSON.parse(raw) as ConfigFileStruct
-    console.log('load dynamic config success')
+    console.warn('load dynamic config success')
   }
   else {
     // 默认使用编译时生成的配置

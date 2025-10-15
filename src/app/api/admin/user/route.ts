@@ -1,12 +1,13 @@
 import type { NextRequest } from 'next/server'
 import type { IStorage } from '@/lib/types'
 
+import process from 'node:process'
 import { NextResponse } from 'next/server'
 import { getAuthInfoFromCookie } from '@/lib/auth'
 import { getConfig } from '@/lib/config'
 import { getStorage } from '@/lib/db'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 // 支持的操作类型
 const ACTIONS = [

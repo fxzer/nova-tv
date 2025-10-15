@@ -20,7 +20,7 @@ function VersionDisplay() {
         const status = await checkForUpdates()
         setUpdateStatus(status)
       }
-      catch (_) {
+      catch {
         // do nothing
       }
       finally {
@@ -121,7 +121,7 @@ function LoginPageClient() {
         setError(data.error ?? '服务器错误')
       }
     }
-    catch (error) {
+    catch {
       setError('网络错误，请稍后重试')
     }
     finally {
@@ -152,7 +152,7 @@ function LoginPageClient() {
         setError(data.error ?? '服务器错误')
       }
     }
-    catch (error) {
+    catch {
       setError('网络错误，请稍后重试')
     }
     finally {
@@ -209,37 +209,37 @@ function LoginPageClient() {
           {/* 登录 / 注册按钮 */}
           {shouldAskUsername && enableRegister
             ? (
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={handleRegister}
-                  disabled={!password || !username || loading}
-                  className="flex-1 inline-flex justify-center rounded-lg bg-blue-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {loading ? '注册中...' : '注册'}
-                </button>
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={handleRegister}
+                    disabled={!password || !username || loading}
+                    className="flex-1 inline-flex justify-center rounded-lg bg-blue-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {loading ? '注册中...' : '注册'}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={
+                      !password || loading || (shouldAskUsername && !username)
+                    }
+                    className="flex-1 inline-flex justify-center rounded-lg bg-green-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-green-600 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {loading ? '登录中...' : '登录'}
+                  </button>
+                </div>
+              )
+            : (
                 <button
                   type="submit"
                   disabled={
                     !password || loading || (shouldAskUsername && !username)
                   }
-                  className="flex-1 inline-flex justify-center rounded-lg bg-green-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-green-600 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex w-full justify-center rounded-lg bg-green-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-green-600 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {loading ? '登录中...' : '登录'}
                 </button>
-              </div>
-            )
-            : (
-              <button
-                type="submit"
-                disabled={
-                  !password || loading || (shouldAskUsername && !username)
-                }
-                className="inline-flex w-full justify-center rounded-lg bg-green-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-green-600 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {loading ? '登录中...' : '登录'}
-              </button>
-            )}
+              )}
         </form>
       </div>
 

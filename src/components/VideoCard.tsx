@@ -151,7 +151,7 @@ export default function VideoCard({
         const fav = await isFavorited(actualSource, actualId)
         setFavorited(fav)
       }
-      catch (err) {
+      catch {
         throw new Error('检查收藏状态失败')
       }
     }
@@ -195,7 +195,7 @@ export default function VideoCard({
           setFavorited(true)
         }
       }
-      catch (err) {
+      catch {
         throw new Error('切换收藏状态失败')
       }
     },
@@ -220,7 +220,7 @@ export default function VideoCard({
         await deletePlayRecord(actualSource, actualId)
         onDelete?.()
       }
-      catch (err) {
+      catch {
         throw new Error('删除播放记录失败')
       }
     },
@@ -368,7 +368,7 @@ export default function VideoCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100" />
 
         {/* 年份显示 - 左上角 */}
-        {showYear && actualYear && actualYear != 'unknown' && (
+        {showYear && actualYear && actualYear !== 'unknown' && (
           <div className="absolute top-0 left-0 rounded-tl-lg rounded-br-lg text-white text-xs font-medium bg-black/25 px-1 py-0.5">
             {actualYear}
           </div>

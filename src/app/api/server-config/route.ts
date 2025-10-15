@@ -1,12 +1,13 @@
 import type { NextRequest } from 'next/server'
+import process from 'node:process'
 import { NextResponse } from 'next/server'
 
 import { getConfig } from '@/lib/config'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
-  console.log('server-config called: ', request.url)
+  console.warn('server-config called: ', request.url)
 
   const config = await getConfig()
   const result = {

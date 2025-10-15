@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server'
-import { NextResponse } from 'next/server'
+import process from 'node:process'
 
+import { NextResponse } from 'next/server'
 import { getAuthInfoFromCookie } from '@/lib/auth'
 
 export async function middleware(request: NextRequest) {

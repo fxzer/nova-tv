@@ -50,11 +50,9 @@ export function HotContent() {
   // 获取首页热门数据
   useEffect(() => {
     let isMounted = true
-    console.log('[HotContent] 当前视图类型:', currentType)
 
     // 只有当前视图是 'hot' 或空时才获取热门数据
     if (currentType && currentType !== 'hot') {
-      console.log('[HotContent] 非热门视图，跳过数据获取')
       return
     }
 
@@ -63,7 +61,6 @@ export function HotContent() {
         if (!isMounted)
           return
         setLoading(true)
-        console.log('[HotContent] 开始获取热门数据...')
 
         // 并行获取热门电影、热门剧集和热门综艺
         const [moviesData, tvShowsData, varietyShowsData] = await Promise.all([
@@ -89,10 +86,6 @@ export function HotContent() {
 
         if (!isMounted)
           return
-
-        console.log('[HotContent] 电影数据:', moviesData)
-        console.log('[HotContent] 剧集数据:', tvShowsData)
-        console.log('[HotContent] 综艺数据:', varietyShowsData)
 
         if (moviesData.code === 200) {
           setHotMovies(sortByRateDesc(moviesData.list))

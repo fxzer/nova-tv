@@ -1,11 +1,12 @@
 import type { NextRequest } from 'next/server'
-import { NextResponse } from 'next/server'
+import process from 'node:process'
 
+import { NextResponse } from 'next/server'
 import { getAuthInfoFromCookie } from '@/lib/auth'
 import { getConfig } from '@/lib/config'
 import { getStorage } from '@/lib/db'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
   const storageType = process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage'

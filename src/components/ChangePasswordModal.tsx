@@ -79,7 +79,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
       onClose()
       onSuccess?.()
     }
-    catch (error) {
+    catch {
       setPasswordError('网络错误，请稍后重试')
     }
     finally {

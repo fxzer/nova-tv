@@ -1,19 +1,23 @@
 #!/usr/bin/env node
 
-const http = require('node:http')
-const path = require('node:path')
+import http from 'node:http'
+import path from 'node:path'
+import process from 'node:process'
+import { fileURLToPath } from 'node:url'
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // 调用 generate-manifest.js 生成 manifest.json
-function generateManifest() {
-  console.log('Generating manifest.json for Docker deployment...')
-
+async function generateManifest() {
   try {
     const generateManifestScript = path.join(
       __dirname,
       'scripts',
       'generate-manifest.js',
     )
-    require(generateManifestScript)
+    await import(generateManifestScript)
   }
   catch (error) {
     console.error('❌ Error calling generate-manifest.js:', error)
@@ -23,8 +27,7 @@ function generateManifest() {
 
 generateManifest()
 
-// 直接在当前进程中启动 standalone Server（`server.js`）
-require('./server.js')
+import('./server.js')
 
 // 每 1 秒轮询一次，直到请求成功
 const TARGET_URL = `http://${process.env.HOSTNAME || 'localhost'}:${
@@ -32,12 +35,9 @@ const TARGET_URL = `http://${process.env.HOSTNAME || 'localhost'}:${
 }/login`
 
 const intervalId = setInterval(() => {
-  console.log(`Fetching ${TARGET_URL} ...`)
-
   const req = http.get(TARGET_URL, (res) => {
     // 当返回 2xx 状态码时认为成功，然后停止轮询
     if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
-      console.log('Server is up, stop polling.')
       clearInterval(intervalId)
 
       // 服务器启动后，立即执行一次 cron 任务
@@ -64,8 +64,6 @@ function executeCronJob() {
     process.env.PORT || 3000
   }/api/cron`
 
-  console.log(`Executing cron job: ${cronUrl}`)
-
   const req = http.get(cronUrl, (res) => {
     let data = ''
 
@@ -75,7 +73,7 @@ function executeCronJob() {
 
     res.on('end', () => {
       if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
-        console.log('Cron job executed successfully:', data)
+        // Cron job 执行成功
       }
       else {
         console.error('Cron job failed:', res.statusCode, data)

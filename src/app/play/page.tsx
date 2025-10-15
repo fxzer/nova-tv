@@ -1,14 +1,15 @@
 'use client'
 import type { SearchResult } from '@/lib/types'
+import process from 'node:process'
 import Artplayer from 'artplayer'
 import Hls from 'hls.js'
-import { useSearchParams } from 'next/navigation'
 
+import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useRef, useState } from 'react'
-import { BackButton } from '@/components/BackButton'
+
+import BackButton from '@/components/BackButton'
 import FavoriteButton from '@/components/FavoriteButton'
 import PageLayout from '@/components/PageLayout'
-
 import PlayDetailInfo from '@/components/PlayDetailInfo'
 import PlayErrorState from '@/components/PlayErrorState'
 import PlayLoadingState from '@/components/PlayLoadingState'
@@ -37,6 +38,27 @@ declare global {
   }
 }
 
+function formatTime(seconds: number): string {
+  if (seconds === 0)
+    return '00:00'
+
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const remainingSeconds = Math.round(seconds % 60)
+
+  if (hours === 0) {
+    // 不到一小时，格式为 00:00
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
+      .toString()
+      .padStart(2, '0')}`
+  }
+  else {
+    // 超过一小时，格式为 00:00:00
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
+  }
+}
 function PlayPageClient() {
   const searchParams = useSearchParams()
 
@@ -169,7 +191,50 @@ function PlayPageClient() {
   const lastVolumeRef = useRef<number>(0.7)
   // 上次使用的播放速率，默认 1.0
   const lastPlaybackRateRef = useRef<number>(1.0)
+  const artPlayerRef = useRef<any>(null)
+  const lastSaveTimeRef = useRef<number>(0)
 
+  // 保存播放进度
+  const saveCurrentPlayProgress = async () => {
+    if (
+      !artPlayerRef.current
+      || !currentSourceRef.current
+      || !currentIdRef.current
+      || !videoTitleRef.current
+      || !detailRef.current?.source_name
+    ) {
+      return
+    }
+
+    const player = artPlayerRef.current
+    const currentTime = player.currentTime || 0
+    const duration = player.duration || 0
+
+    // 如果播放时间太短（少于5秒）或者视频时长无效，不保存
+    if (currentTime < 1 || !duration) {
+      return
+    }
+
+    try {
+      await savePlayRecord(currentSourceRef.current, currentIdRef.current, {
+        title: videoTitleRef.current,
+        source_name: detailRef.current?.source_name || '',
+        year: detailRef.current?.year,
+        cover: detailRef.current?.poster || '',
+        index: currentEpisodeIndexRef.current + 1, // 转换为1基索引
+        total_episodes: detailRef.current?.episodes.length || 1,
+        play_time: Math.floor(currentTime),
+        total_time: Math.floor(duration),
+        save_time: Date.now(),
+        search_title: searchTitle,
+      })
+
+      lastSaveTimeRef.current = Date.now()
+    }
+    catch (err) {
+      console.error('保存播放进度失败:', err)
+    }
+  }
   // 换源相关状态
   const [availableSources, setAvailableSources] = useState<SearchResult[]>([])
   const [sourceSearchLoading] = useState(false)
@@ -208,9 +273,7 @@ function PlayPageClient() {
 
   // 播放进度保存相关
   const saveIntervalRef = useRef<NodeJS.Timeout | null>(null)
-  const lastSaveTimeRef = useRef<number>(0)
 
-  const artPlayerRef = useRef<any>(null)
   const artRef = useRef<HTMLDivElement | null>(null)
 
   // -----------------------------------------------------------------------------
@@ -365,32 +428,9 @@ function PlayPageClient() {
           newConfig,
         )
       }
-      console.log('跳过片头片尾配置已保存:', newConfig)
     }
     catch (err) {
       console.error('保存跳过片头片尾配置失败:', err)
-    }
-  }
-
-  const formatTime = (seconds: number): string => {
-    if (seconds === 0)
-      return '00:00'
-
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    const remainingSeconds = Math.round(seconds % 60)
-
-    if (hours === 0) {
-      // 不到一小时，格式为 00:00
-      return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
-        .toString()
-        .padStart(2, '0')}`
-    }
-    else {
-      // 超过一小时，格式为 00:00:00
-      return `${hours.toString().padStart(2, '0')}:${minutes
-        .toString()
-        .padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
     }
   }
 
@@ -467,7 +507,7 @@ function PlayPageClient() {
                 const normalizeTitle = (title: string) => {
                   return title.trim()
                     .replace(/\s+/g, ' ') // 多个空格替换为单个
-                    .replace(/[［\[\(].*?[）\]\］]/g, '') // 移除括号内容（通常是季数、年份等）
+                    .replace(/[［[(].*?[）\]］]/g, '') // 移除括号内容（通常是季数、年份等）
                     .toLowerCase()
                 }
 
@@ -489,7 +529,7 @@ function PlayPageClient() {
                   const normalizeTitle = (title: string) => {
                     return title.trim()
                       .replace(/\s+/g, ' ')
-                      .replace(/[［\[\(].*?[）\]\］]/g, '')
+                      .replace(/[［[(].*?[）\]］]/g, '')
                       .toLowerCase()
                   }
 
@@ -501,7 +541,8 @@ function PlayPageClient() {
                   sourcesInfo = looselyFilteredSources
                 }
                 // 如果宽松匹配也没有结果，保留原始搜索结果
-              } else {
+              }
+              else {
                 sourcesInfo = filteredSources
               }
 
@@ -523,7 +564,8 @@ function PlayPageClient() {
                       ),
                   ),
                 ]
-              } else {
+              }
+              else {
                 // 更新当前源为最新的详细信息
                 const updatedCurrentSource = sourcesInfo.find(
                   source =>
@@ -535,7 +577,7 @@ function PlayPageClient() {
               }
             }
           }
-          catch (error) {
+          catch {
             // 如果获取当前视频详情失败，fallback到搜索
             sourcesInfo = await searchSources(
               searchTitle || videoTitle,
@@ -700,7 +742,6 @@ function PlayPageClient() {
 
       // 记录当前播放进度（仅在同一集数切换时恢复）
       const currentPlayTime = artPlayerRef.current?.currentTime || 0
-      console.log('换源前当前播放时间:', currentPlayTime)
 
       // 清除前一个历史记录
       if (currentSourceRef.current && currentIdRef.current) {
@@ -709,7 +750,6 @@ function PlayPageClient() {
             currentSourceRef.current,
             currentIdRef.current,
           )
-          console.log('已清除前一个播放记录')
         }
         catch (err) {
           console.error('清除播放记录失败:', err)
@@ -779,27 +819,9 @@ function PlayPageClient() {
     }
   }
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyboardShortcuts)
-    return () => {
-      document.removeEventListener('keydown', handleKeyboardShortcuts)
-    }
-  }, [])
-
   // ---------------------------------------------------------------------------
-  // 集数切换
+  // 集数切换相关函数 - 定义在使用之前
   // ---------------------------------------------------------------------------
-  // 处理集数切换
-  const handleEpisodeChange = (episodeNumber: number) => {
-    if (episodeNumber >= 0 && episodeNumber < totalEpisodes) {
-      // 在更换集数前保存当前播放进度
-      if (artPlayerRef.current && artPlayerRef.current.paused) {
-        saveCurrentPlayProgress()
-      }
-      setCurrentEpisodeIndex(episodeNumber)
-    }
-  }
-
   const handlePreviousEpisode = () => {
     const d = detailRef.current
     const idx = currentEpisodeIndexRef.current
@@ -822,9 +844,6 @@ function PlayPageClient() {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // 键盘快捷键
-  // ---------------------------------------------------------------------------
   // 处理全局快捷键
   const handleKeyboardShortcuts = (e: KeyboardEvent) => {
     // 忽略输入框中的按键事件
@@ -913,56 +932,34 @@ function PlayPageClient() {
     }
   }
 
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyboardShortcuts)
+    return () => {
+      document.removeEventListener('keydown', handleKeyboardShortcuts)
+    }
+  }, [])
+
+  // ---------------------------------------------------------------------------
+  // 集数切换
+  // ---------------------------------------------------------------------------
+  // 处理集数切换
+  const handleEpisodeChange = (episodeNumber: number) => {
+    if (episodeNumber >= 0 && episodeNumber < totalEpisodes) {
+      // 在更换集数前保存当前播放进度
+      if (artPlayerRef.current && artPlayerRef.current.paused) {
+        saveCurrentPlayProgress()
+      }
+      setCurrentEpisodeIndex(episodeNumber)
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 键盘快捷键
+  // ---------------------------------------------------------------------------
+
   // ---------------------------------------------------------------------------
   // 播放记录相关
   // ---------------------------------------------------------------------------
-  // 保存播放进度
-  const saveCurrentPlayProgress = async () => {
-    if (
-      !artPlayerRef.current
-      || !currentSourceRef.current
-      || !currentIdRef.current
-      || !videoTitleRef.current
-      || !detailRef.current?.source_name
-    ) {
-      return
-    }
-
-    const player = artPlayerRef.current
-    const currentTime = player.currentTime || 0
-    const duration = player.duration || 0
-
-    // 如果播放时间太短（少于5秒）或者视频时长无效，不保存
-    if (currentTime < 1 || !duration) {
-      return
-    }
-
-    try {
-      await savePlayRecord(currentSourceRef.current, currentIdRef.current, {
-        title: videoTitleRef.current,
-        source_name: detailRef.current?.source_name || '',
-        year: detailRef.current?.year,
-        cover: detailRef.current?.poster || '',
-        index: currentEpisodeIndexRef.current + 1, // 转换为1基索引
-        total_episodes: detailRef.current?.episodes.length || 1,
-        play_time: Math.floor(currentTime),
-        total_time: Math.floor(duration),
-        save_time: Date.now(),
-        search_title: searchTitle,
-      })
-
-      lastSaveTimeRef.current = Date.now()
-      console.log('播放进度已保存:', {
-        title: videoTitleRef.current,
-        episode: currentEpisodeIndexRef.current + 1,
-        year: detailRef.current?.year,
-        progress: `${Math.floor(currentTime)}/${Math.floor(duration)}`,
-      })
-    }
-    catch (err) {
-      console.error('保存播放进度失败:', err)
-    }
-  }
 
   useEffect(() => {
     // 页面即将卸载时保存播放进度
@@ -1095,7 +1092,6 @@ function PlayPageClient() {
       setError('视频地址无效')
       return
     }
-    console.log(videoUrl)
 
     // 检测是否为WebKit浏览器
     const isWebkit
@@ -1105,8 +1101,7 @@ function PlayPageClient() {
     // 非WebKit浏览器且播放器已存在，使用switch方法切换
     if (!isWebkit && artPlayerRef.current) {
       artPlayerRef.current.switch = videoUrl
-      artPlayerRef.current.title = `${videoTitle} - 第${
-        currentEpisodeIndex + 1
+      artPlayerRef.current.title = `${videoTitle} - 第${currentEpisodeIndex + 1
       }集`
       artPlayerRef.current.poster = videoCover
       if (artPlayerRef.current?.video) {
@@ -1204,15 +1199,12 @@ function PlayPageClient() {
               if (data.fatal) {
                 switch (data.type) {
                   case Hls.ErrorTypes.NETWORK_ERROR:
-                    console.log('网络错误，尝试恢复...')
                     hls.startLoad()
                     break
                   case Hls.ErrorTypes.MEDIA_ERROR:
-                    console.log('媒体错误，尝试恢复...')
                     hls.recoverMediaError()
                     break
                   default:
-                    console.log('无法恢复的错误')
                     hls.destroy()
                     break
                 }
@@ -1255,7 +1247,7 @@ function PlayPageClient() {
                 }
                 setBlockAdEnabled(newVal)
               }
-              catch (_) {
+              catch {
                 // ignore
               }
               return newVal
@@ -1394,7 +1386,6 @@ function PlayPageClient() {
               target = Math.max(0, duration - 5)
             }
             artPlayerRef.current.currentTime = target
-            console.log('成功恢复播放进度到:', resumeTimeRef.current)
           }
           catch (err) {
             console.warn('恢复播放进度失败:', err)
@@ -1473,7 +1464,7 @@ function PlayPageClient() {
       artPlayerRef.current.on('error', (err: any) => {
         console.error('播放器错误:', err)
         if (artPlayerRef.current.currentTime > 0) {
-
+          // 这里可以添加错误处理逻辑
         }
       })
 
@@ -1599,18 +1590,16 @@ function PlayPageClient() {
         {/* 第二行：播放器和选集 */}
         <div className="space-y-2">
           <div
-            className={`relative grid gap-4 md:h-[400px] lg:h-[500px] xl:h-[650px] 2xl:h-[750px] transition-all duration-300 ease-in-out ${
-              isEpisodeSelectorCollapsed
-                ? 'grid-cols-1'
-                : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4'
+            className={`relative grid gap-4 md:h-[400px] lg:h-[500px] xl:h-[650px] 2xl:h-[750px] transition-all duration-300 ease-in-out ${isEpisodeSelectorCollapsed
+              ? 'grid-cols-1'
+              : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4'
             }`}
           >
             {/* 播放器 */}
             <div
-              className={`h-full transition-all duration-300 ease-in-out rounded-xl border border-white/0 dark:border-white/30 ${
-                isEpisodeSelectorCollapsed
-                  ? 'col-span-1'
-                  : 'md:col-span-2 lg:col-span-3'
+              className={`h-full transition-all duration-300 ease-in-out rounded-xl border border-white/0 dark:border-white/30 ${isEpisodeSelectorCollapsed
+                ? 'col-span-1'
+                : 'md:col-span-2 lg:col-span-3'
               }`}
             >
               <div className="relative w-full h-[300px] md:h-full">
@@ -1632,8 +1621,7 @@ function PlayPageClient() {
                     }
                   >
                     <svg
-                      className={`w-4 h-4 text-gray-600 dark:text-gray-400 transition-transform duration-200 ${
-                        isEpisodeSelectorCollapsed ? 'rotate-180' : 'rotate-0'
+                      className={`w-4 h-4 text-gray-600 dark:text-gray-400 transition-transform duration-200 ${isEpisodeSelectorCollapsed ? 'rotate-180' : 'rotate-0'
                       }`}
                       fill="none"
                       stroke="currentColor"
@@ -1659,10 +1647,9 @@ function PlayPageClient() {
 
             {/* 选集和换源 - 在移动端始终显示，在 lg 及以上可折叠 */}
             <div
-              className={`h-[350px] md:h-full min-w-60 lg:h-full md:overflow-hidden transition-all duration-300 ease-in-out ${
-                isEpisodeSelectorCollapsed
-                  ? 'md:col-span-1 md:hidden lg:opacity-0 lg:scale-95'
-                  : 'md:col-span-1 lg:opacity-100 lg:scale-100'
+              className={`h-[350px] md:h-full min-w-60 lg:h-full md:overflow-hidden transition-all duration-300 ease-in-out ${isEpisodeSelectorCollapsed
+                ? 'md:col-span-1 md:hidden lg:opacity-0 lg:scale-95'
+                : 'md:col-span-1 lg:opacity-100 lg:scale-100'
               }`}
             >
               <PlayPanel

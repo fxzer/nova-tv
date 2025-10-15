@@ -72,23 +72,23 @@ function DoubanContent({
         {/* 选择器组件 */}
         {type !== 'custom'
           ? (
-            <Selector
-              type={type as 'movie' | 'tv' | 'show'}
-              primarySelection={primarySelection}
-              secondarySelection={secondarySelection}
-              onPrimaryChange={onPrimaryChange}
-              onSecondaryChange={onSecondaryChange}
-            />
-          )
+              <Selector
+                type={type as 'movie' | 'tv' | 'show'}
+                primarySelection={primarySelection}
+                secondarySelection={secondarySelection}
+                onPrimaryChange={onPrimaryChange}
+                onSecondaryChange={onSecondaryChange}
+              />
+            )
           : (
-            <CustomSelector
-              customCategories={customCategories}
-              primarySelection={primarySelection}
-              secondarySelection={secondarySelection}
-              onPrimaryChange={onPrimaryChange}
-              onSecondaryChange={onSecondaryChange}
-            />
-          )}
+              <CustomSelector
+                customCategories={customCategories}
+                primarySelection={primarySelection}
+                secondarySelection={secondarySelection}
+                onPrimaryChange={onPrimaryChange}
+                onSecondaryChange={onSecondaryChange}
+              />
+            )}
       </div>
 
       {/* 内容展示区域 */}
@@ -96,22 +96,20 @@ function DoubanContent({
         {/* 内容网格 */}
         <VideoGridContainer>
           {loading
-            ? // 显示骨架屏
-            skeletonData.map(index => <VideoSkeleton key={index} />)
-            : // 显示实际数据
-            doubanData.map((item, index) => (
-              <div key={`${item.title}-${index}`} className="w-full">
-                <VideoCard
-                  from="douban"
-                  title={item.title}
-                  poster={item.poster}
-                  douban_id={item.id}
-                  rate={item.rate}
-                  year={item.year}
-                  type={type === 'movie' ? 'movie' : ''} // 电影类型严格控制，tv 不控
-                />
-              </div>
-            ))}
+            ? skeletonData.map((_, index) => <VideoSkeleton key={index} />)
+            : doubanData.map((item, index) => (
+                <div key={`${item.title}-${index}`} className="w-full">
+                  <VideoCard
+                    from="douban"
+                    title={item.title}
+                    poster={item.poster}
+                    douban_id={item.id}
+                    rate={item.rate}
+                    year={item.year}
+                    type={type === 'movie' ? 'movie' : ''} // 电影类型严格控制，tv 不控
+                  />
+                </div>
+              ))}
         </VideoGridContainer>
 
         {/* 加载更多指示器 */}
@@ -318,6 +316,7 @@ function PageView() {
       if (currentView === 'custom') {
         const selectedCategory = customCategories.find(
           cat =>
+
             cat.type === primarySelection && cat.query === secondarySelection,
         )
 
@@ -346,7 +345,7 @@ function PageView() {
         throw new Error(data.message || '获取数据失败')
       }
     }
-    catch (err) {
+    catch {
       // 错误已通过抛出的 Error 处理
     }
   }, [
@@ -429,7 +428,7 @@ function PageView() {
             throw new Error(data.message || '获取数据失败')
           }
         }
-        catch (err) {
+        catch {
           // 错误已通过抛出的 Error 处理
         }
         finally {
@@ -524,24 +523,24 @@ function PageView() {
           <div className="max-w-[95%] mx-auto">
             {currentView === 'hot'
               ? (
-                <HotContent />
-              )
+                  <HotContent />
+                )
               : (
-                <DoubanContent
-                  type={currentView}
-                  customCategories={customCategories}
-                  primarySelection={primarySelection}
-                  secondarySelection={secondarySelection}
-                  doubanData={doubanData}
-                  loading={doubanLoading}
-                  hasMore={hasMore}
-                  isLoadingMore={isLoadingMore}
-                  skeletonData={skeletonData}
-                  onPrimaryChange={handlePrimaryChange}
-                  onSecondaryChange={handleSecondaryChange}
-                  loadingRef={loadingRef}
-                />
-              )}
+                  <DoubanContent
+                    type={currentView}
+                    customCategories={customCategories}
+                    primarySelection={primarySelection}
+                    secondarySelection={secondarySelection}
+                    doubanData={doubanData}
+                    loading={doubanLoading}
+                    hasMore={hasMore}
+                    isLoadingMore={isLoadingMore}
+                    skeletonData={skeletonData}
+                    onPrimaryChange={handlePrimaryChange}
+                    onSecondaryChange={handleSecondaryChange}
+                    loadingRef={loadingRef}
+                  />
+                )}
           </div>
         </div>
       </PageLayout>
