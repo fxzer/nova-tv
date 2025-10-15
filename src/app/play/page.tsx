@@ -141,14 +141,7 @@ function PlayPageClient() {
   const lastSkipCheckRef = useRef(0)
 
   // 去广告开关（从 localStorage 继承，默认 true）
-  const [blockAdEnabled, setBlockAdEnabled] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const v = localStorage.getItem('enable_blockad')
-      if (v !== null)
-        return v === 'true'
-    }
-    return true
-  })
+  const [blockAdEnabled, setBlockAdEnabled] = useState<boolean>(true)
   const blockAdEnabledRef = useRef(blockAdEnabled)
   useEffect(() => {
     blockAdEnabledRef.current = blockAdEnabled
@@ -264,20 +257,7 @@ function PlayPageClient() {
   const [sourceSearchError] = useState<string | null>(null)
 
   // 优选和测速开关
-  const [optimizationEnabled] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('enableOptimization')
-      if (saved !== null) {
-        try {
-          return JSON.parse(saved)
-        }
-        catch {
-          /* ignore */
-        }
-      }
-    }
-    return true
-  })
+  const [optimizationEnabled, setOptimizationEnabled] = useState<boolean>(true)
 
   // 保存优选时的测速结果，避免EpisodeSelector重复测速
   const [precomputedVideoInfo] = useState<
@@ -493,6 +473,26 @@ function PlayPageClient() {
     updateVideoUrl(detail, currentEpisodeIndex)
   }, [detail, currentEpisodeIndex])
 
+  // 从 localStorage 初始化状态
+  useEffect(() => {
+    // 初始化去广告开关
+    const blockAdValue = localStorage.getItem('enable_blockad')
+    if (blockAdValue !== null) {
+      setBlockAdEnabled(blockAdValue === 'true')
+    }
+
+    // 初始化优选开关
+    const optimizationValue = localStorage.getItem('enableOptimization')
+    if (optimizationValue !== null) {
+      try {
+        setOptimizationEnabled(JSON.parse(optimizationValue))
+      }
+      catch {
+        /* ignore */
+      }
+    }
+  }, [])
+
   // 进入页面时直接获取全部源信息
   useEffect(() => {
     const initAll = async () => {
@@ -673,13 +673,15 @@ function PlayPageClient() {
         }
 
         // 规范URL参数
-        const newUrl = new URL(window.location.href)
-        newUrl.searchParams.set('source', detailData.source)
-        newUrl.searchParams.set('id', detailData.id)
-        newUrl.searchParams.set('year', detailData.year)
-        newUrl.searchParams.set('title', detailData.title)
-        newUrl.searchParams.delete('prefer')
-        window.history.replaceState({}, '', newUrl.toString())
+        if (typeof window !== 'undefined') {
+          const newUrl = new URL(window.location.href)
+          newUrl.searchParams.set('source', detailData.source)
+          newUrl.searchParams.set('id', detailData.id)
+          newUrl.searchParams.set('year', detailData.year)
+          newUrl.searchParams.set('title', detailData.title)
+          newUrl.searchParams.delete('prefer')
+          window.history.replaceState({}, '', newUrl.toString())
+        }
 
         // 标记准备就绪
         markReady(updateProgressState)
@@ -822,11 +824,13 @@ function PlayPageClient() {
       }
 
       // 更新URL参数（不刷新页面）
-      const newUrl = new URL(window.location.href)
-      newUrl.searchParams.set('source', newSource)
-      newUrl.searchParams.set('id', newId)
-      newUrl.searchParams.set('year', newDetail.year)
-      window.history.replaceState({}, '', newUrl.toString())
+      if (typeof window !== 'undefined') {
+        const newUrl = new URL(window.location.href)
+        newUrl.searchParams.set('source', newSource)
+        newUrl.searchParams.set('id', newId)
+        newUrl.searchParams.set('year', newDetail.year)
+        window.history.replaceState({}, '', newUrl.toString())
+      }
 
       setVideoTitle(newDetail.title || newTitle)
       setVideoYear(newDetail.year)
@@ -1707,11 +1711,6 @@ function PlayPageClient() {
 }
 
 export default function PlayPage() {
-  // 确保只在客户端渲染
-  if (typeof window === 'undefined') {
-    return <div>Loading...</div>
-  }
-
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <PlayPageClient />
