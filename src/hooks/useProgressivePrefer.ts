@@ -1,7 +1,6 @@
 import type { SearchResult } from '@/lib/types'
 
 import { useCallback, useState } from 'react'
-import { getVideoResolutionFromM3u8 } from '@/lib/utils'
 
 // 优选进度状态
 export interface PreferProgressState {
@@ -120,6 +119,8 @@ export function useProgressivePrefer() {
                   ? source.episodes[1]
                   : source.episodes[0]
 
+              // 动态导入以避免 SSR 问题
+              const { getVideoResolutionFromM3u8 } = await import('@/lib/utils')
               const testResult = await getVideoResolutionFromM3u8(episodeUrl)
 
               return {

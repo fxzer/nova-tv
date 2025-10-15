@@ -29,17 +29,25 @@ function SearchPageClient() {
   // 获取默认聚合设置：只读取用户本地设置，默认为 true
   const getDefaultAggregate = () => {
     if (typeof window !== 'undefined') {
-      const userSetting = localStorage.getItem('defaultAggregateSearch')
-      if (userSetting !== null) {
-        return JSON.parse(userSetting)
+      try {
+        const userSetting = localStorage.getItem('defaultAggregateSearch')
+        if (userSetting !== null) {
+          return JSON.parse(userSetting)
+        }
+      }
+      catch {
+        // ignore
       }
     }
     return true // 默认启用聚合
   }
 
-  const [viewMode, setViewMode] = useState<'agg' | 'all'>(() => {
-    return getDefaultAggregate() ? 'agg' : 'all'
-  })
+  const [viewMode, setViewMode] = useState<'agg' | 'all'>('agg')
+
+  // 在客户端挂载后初始化 viewMode
+  useEffect(() => {
+    setViewMode(getDefaultAggregate() ? 'agg' : 'all')
+  }, [])
 
   // 管理当前选中的分组
   const [selectedGroup, setSelectedGroup] = useState<string>('')
@@ -432,6 +440,11 @@ function SearchPageClient() {
 }
 
 export default function SearchPage() {
+  // 确保只在客户端渲染
+  if (typeof window === 'undefined') {
+    return <div>Loading...</div>
+  }
+
   return (
     <Suspense>
       <SearchPageClient />

@@ -6,6 +6,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    ssr: false, // 禁用服务器端渲染
+  },
 
   env: {
     PASSWORD: process.env.PASSWORD,

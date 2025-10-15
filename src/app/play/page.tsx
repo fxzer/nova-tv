@@ -1,4 +1,5 @@
 'use client'
+
 import type { SearchResult } from '@/lib/types'
 
 import { useSearchParams } from 'next/navigation'
@@ -1254,7 +1255,7 @@ function PlayPageClient() {
             html: '去广告',
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Huge Icons by Hugeicons - undefined --><g fill="none" stroke="currentColor" strokeLinecap="round" stroke-width="1.5"><path d="M5.506 15.992L8.03 9.029c.46-.967 1.162-1.766 1.967.151c.743 1.77 1.85 5.01 2.505 6.815m-5.85-2.993h4.669"/><path d="M3.464 4.318C2 5.636 2 7.758 2 12s0 6.364 1.464 7.682C4.93 21 7.286 21 12 21s7.071 0 8.535-1.318S22 16.242 22 12s0-6.364-1.465-7.682C19.072 3 16.714 3 12 3S4.929 3 3.464 4.318"/><path d="M18.484 8.987v2.995m0 0v3.943m0-3.943h-2.018c-.24 0-.478.044-.702.131c-1.693.657-1.693 3.1 0 3.757c.225.087.462.131.702.131h2.018"/></g></svg>',
             switch: blockAdEnabled,
-            onSwitch: (item) => {
+            onSwitch: (item: any) => {
               const newVal = !item.switch
               try {
                 localStorage.setItem('enable_blockad', String(newVal))
@@ -1281,7 +1282,7 @@ function PlayPageClient() {
             name: '跳过片头片尾',
             html: '跳过片头片尾',
             switch: skipConfigRef.current.enable,
-            onSwitch(item) {
+            onSwitch(item: any) {
               const newConfig = {
                 ...skipConfigRef.current,
                 enable: !item.switch,
@@ -1706,6 +1707,11 @@ function PlayPageClient() {
 }
 
 export default function PlayPage() {
+  // 确保只在客户端渲染
+  if (typeof window === 'undefined') {
+    return <div>Loading...</div>
+  }
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <PlayPageClient />

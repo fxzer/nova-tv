@@ -20,11 +20,11 @@
     "gen:runtime": "node scripts/convert-config.js",
     "gen:manifest": "node scripts/generate-manifest.js",
     "gen:version": "node scripts/generate-version.js",
-    "copy:static": "cp -r .next/static .next/standalone/m/nova-tv/.next/ && cp -r public .next/standalone/m/nova-tv/ || echo 'Standalone directory not found, skipping static copy'",
+    "copy:static": "cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/ || echo 'Standalone directory not found, skipping static copy'",
     "postbuild": "echo 'Build completed - sitemap generation disabled'",
     "prepare": "husky install",
     "pages:build": "pnpm gen:runtime && pnpm gen:manifest && next build && npx @cloudflare/next-on-pages --experimental-minify",
-    "start:prod": "node .next/standalone/m/nova-tv/server.js"
+    "start:prod": "node .next/standalone/server.js"
   },
   "dependencies": {
     "@cloudflare/next-on-pages": "^1.13.12",
