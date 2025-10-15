@@ -21,7 +21,21 @@ export async function GET(request: NextRequest) {
       'img3.doubanio.com',
       'img9.doubanio.com',
       'movie.douban.com',
-      // 可以根据需要添加更多允许的域名
+      // 添加更多图片域名
+      'yczy5.com',
+      'mtzy0.com',
+      'img.jisuimage.com',
+      'yzzy8.com',
+      'btzy8.com',
+      'ztzy8.com',
+      'cjtt.com',
+      'kkzy8.com',
+      'bttuku.com',
+      'img.liangnizi.com',
+      'tu.52av.one',
+      'p1.so.tn',
+      'p2.so.tn',
+      'p3.so.tn',
     ]
 
     // 检查是否为允许的域名
@@ -32,9 +46,15 @@ export async function GET(request: NextRequest) {
     }
 
     // 动态设置 Referer 头
-    let referer = 'https://movie.douban.com/'
+    let referer = 'https://www.baidu.com/'
     if (url.hostname.includes('douban.com') || url.hostname.includes('doubanio.com')) {
       referer = 'https://movie.douban.com/'
+    }
+    else if (url.hostname.includes('yczy5.com') || url.hostname.includes('mtzy0.com')) {
+      referer = 'https://www.baidu.com/'
+    }
+    else if (url.hostname.includes('jisuimage.com')) {
+      referer = 'https://www.jisuimage.com/'
     }
     // 可以根据不同域名设置不同的 referer
 

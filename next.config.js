@@ -30,6 +30,12 @@ const nextConfig = {
         hostname: '**',
       },
     ],
+    localPatterns: [
+      {
+        pathname: '/api/image-proxy',
+        search: '?url=*',
+      },
+    ],
     domains: [
       'img1.doubanio.com',
       'img2.doubanio.com',
