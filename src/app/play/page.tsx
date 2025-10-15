@@ -1,6 +1,5 @@
 'use client'
 import type { SearchResult } from '@/lib/types'
-import process from 'node:process'
 import Artplayer from 'artplayer'
 import Hls from 'hls.js'
 

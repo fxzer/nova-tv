@@ -2,7 +2,6 @@
 
 import http from 'node:http'
 import path from 'node:path'
-import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
 // Get __dirname equivalent in ES modules

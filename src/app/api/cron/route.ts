@@ -1,7 +1,6 @@
 import type { NextRequest } from 'next/server'
 import type { SearchResult } from '@/lib/types'
 
-import process from 'node:process'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { fetchVideoDetail } from '@/lib/fetchVideoDetail'

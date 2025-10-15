@@ -1,5 +1,4 @@
 import type { NextRequest } from 'next/server'
-import process from 'node:process'
 import { NextResponse } from 'next/server'
 
 import { getConfig } from '@/lib/config'

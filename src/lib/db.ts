@@ -1,6 +1,5 @@
 import type { AdminConfig } from './admin.types'
 import type { Favorite, IStorage, PlayRecord, SkipConfig } from './types'
-import process from 'node:process'
 import { D1Storage } from './d1.db'
 import { RedisStorage } from './redis.db'
 import { UpstashRedisStorage } from './upstash.db'

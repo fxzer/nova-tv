@@ -1,4 +1,3 @@
-import process from 'node:process'
 /** @type {import('next').NextConfig} */
 import withPWA from 'next-pwa'
 

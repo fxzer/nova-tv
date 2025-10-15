@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next'
-import process from 'node:process'
 import { Inter } from 'next/font/google'
 
 import { getConfig } from '@/lib/config'

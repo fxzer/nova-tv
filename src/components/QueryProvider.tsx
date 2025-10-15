@@ -1,6 +1,5 @@
 'use client'
 
-import process from 'node:process'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 

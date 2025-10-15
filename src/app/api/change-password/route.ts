@@ -1,7 +1,6 @@
 import type { NextRequest } from 'next/server'
 import type { IStorage } from '@/lib/types'
 
-import process from 'node:process'
 import { NextResponse } from 'next/server'
 import { getAuthInfoFromCookie } from '@/lib/auth'
 import { getStorage } from '@/lib/db'

@@ -1,7 +1,6 @@
 import type { NextRequest } from 'next/server'
 import type { AdminConfigResult } from '@/lib/admin.types'
 
-import process from 'node:process'
 import { NextResponse } from 'next/server'
 import { getAuthInfoFromCookie } from '@/lib/auth'
 import { getConfig } from '@/lib/config'

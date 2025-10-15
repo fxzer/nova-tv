@@ -14,7 +14,6 @@
  */
 
 import type { SkipConfig } from './types'
-import process from 'node:process'
 import { getAuthInfoFromBrowserCookie } from './auth'
 
 // 全局错误触发函数

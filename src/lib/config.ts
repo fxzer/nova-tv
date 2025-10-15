@@ -1,5 +1,4 @@
 import type { AdminConfig } from './admin.types'
-import process from 'node:process'
 
 import { getStorage } from '@/lib/db'
 import runtimeConfig from './runtime'

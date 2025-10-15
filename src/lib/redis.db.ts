@@ -2,7 +2,6 @@ import type { RedisClientType } from 'redis'
 import type { AdminConfig } from './admin.types'
 
 import type { Favorite, IStorage, PlayRecord, SkipConfig } from './types'
-import process from 'node:process'
 import { createClient } from 'redis'
 
 // 搜索历史最大条数
