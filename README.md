@@ -151,7 +151,48 @@ nova-tv 在原版 MoonTV 基础上进行了全面优化和增强，主要包括�
 
 ### Docker 部署
 
-#### 1. 直接运行（最简单，localstorage）
+#### Docker 快速部署
+
+#### 🐳 使用 Docker Compose（推荐）
+
+```bash
+# 克隆项目
+git clone <你的仓库地址> nova-tv
+cd nova-tv
+
+# 配置环境变量（可选）
+cp .env.example .env
+# 编辑 .env 文件设置你的密码
+
+# 启动服务
+docker-compose up -d
+```
+
+访问 `http://localhost:3000`，默认密码：**1234**
+
+详细部署指南请查看：[DOCKER_DEPLOY.md](./DOCKER_DEPLOY.md)
+
+#### 🔧 使用 PM2 部署
+
+```bash
+# 安装 PM2
+npm install -g pm2
+
+# 构建项目
+pnpm build
+
+# 设置环境变量
+export PASSWORD=你的密码
+
+# 启动应用
+pm2 start ecosystem.config.cjs
+```
+
+访问 `http://localhost:3000`，默认密码：**1234**
+
+详细部署指南请查看：[PM2_DEPLOY.md](./PM2_DEPLOY.md)
+
+### 1. 直接运行（最简单，localstorage）
 
 ```bash
 # 拉取预构建镜像
@@ -232,8 +273,8 @@ networks:
 
 | 变量                              | 说明                                         | 可选值                           | 默认值                                                                                                                     |
 | --------------------------------- | -------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| PASSWORD                          | 访问密码（所有部署方式都需要）               | 任意字符串                       | 1234                                                                                                                       |
 | USERNAME                          | 非 localstorage 部署时的管理员账号           | 任意字符串                       | （空）                                                                                                                     |
-| PASSWORD                          | 非 localstorage 部署时为管理员密码           | 任意字符串                       | （空）                                                                                                                     |
 | SITE_NAME                         | 站点名称                                     | 任意字符串                       | nova-tv                                                                                                                    |
 | ANNOUNCEMENT                      | 站点公告                                     | 任意字符串                       | 本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。 |
 | NEXT_PUBLIC_STORAGE_TYPE          | 播放记录/收藏的存储方式                      | localstorage、redis、d1、upstash | localstorage                                                                                                               |

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 export async function GET() {
   const response = NextResponse.json({ ok: true })
 
-  const testValue = JSON.stringify({ role: 'user', password: '8888' })
+  const testValue = JSON.stringify({ role: 'user', password: '1234' })
   const encodedValue = encodeURIComponent(testValue)
 
   response.cookies.set('auth', encodedValue, {

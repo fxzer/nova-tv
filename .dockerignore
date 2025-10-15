@@ -1,2 +1,51 @@
+# 依赖目录
+node_modules
+.pnpm-store
+
+# 环境变量文件
 .env
 .env*.local
+.env.production
+
+# 构建产物
+.next
+out
+dist
+
+# 开发工具配置
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# 日志文件
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 测试覆盖率
+coverage
+
+# 临时文件
+.tmp
+.temp
+
+# 文档
+README.md
+*.md
+
+# Docker 相关
+Dockerfile*
+docker-compose*.yml
+.dockerignore

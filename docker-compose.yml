@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  nova-tv:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
+      - PASSWORD=${PASSWORD:-1234}
+      - NEXT_PUBLIC_IMAGE_PROXY=${NEXT_PUBLIC_IMAGE_PROXY:-/api/image-proxy?url=}
+      - NEXT_PUBLIC_STORAGE_TYPE=${NEXT_PUBLIC_STORAGE_TYPE:-localstorage}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/login', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # volumes:
+    #   - ./data:/app/data  # 可选：如果有数据持久化需求，可以挂载目录
+    networks:
+      - nova-tv-network
+
+networks:
+  nova-tv-network:
+    driver: bridge
