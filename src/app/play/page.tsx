@@ -275,6 +275,9 @@ function PlayPageClient() {
     'initing' | 'sourceChanging'
   >('initing')
 
+  // 切换集数加载状态
+  const [isEpisodeChanging, setIsEpisodeChanging] = useState(false)
+
   // 播放进度保存相关
   const saveIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -974,11 +977,25 @@ function PlayPageClient() {
   // 处理集数切换
   const handleEpisodeChange = (episodeNumber: number) => {
     if (episodeNumber >= 0 && episodeNumber < totalEpisodes) {
+      // 显示切换集数加载状态
+      setIsEpisodeChanging(true)
+
       // 在更换集数前保存当前播放进度
-      if (artPlayerRef.current && artPlayerRef.current.paused) {
+      if (artPlayerRef.current && !artPlayerRef.current.paused) {
         saveCurrentPlayProgress()
       }
       setCurrentEpisodeIndex(episodeNumber)
+
+      // 确保切换集数后自动播放
+      setTimeout(() => {
+        if (artPlayerRef.current && artPlayerRef.current.paused) {
+          artPlayerRef.current.play()
+        }
+        // 延迟隐藏切换集数加载状态，让用户看到反馈
+        setTimeout(() => {
+          setIsEpisodeChanging(false)
+        }, 500)
+      }, 100)
     }
   }
 
@@ -1138,6 +1155,14 @@ function PlayPageClient() {
           artPlayerRef.current.video as HTMLVideoElement,
           videoUrl,
         )
+        // 确保切换后自动播放
+        setTimeout(() => {
+          if (artPlayerRef.current && artPlayerRef.current.paused) {
+            artPlayerRef.current.play()
+          }
+          // 隐藏切换集数加载状态
+          setIsEpisodeChanging(false)
+        }, 200)
       }
       return
     }
@@ -1438,12 +1463,21 @@ function PlayPageClient() {
             artPlayerRef.current.playbackRate = lastPlaybackRateRef.current
           }
           artPlayerRef.current.notice.show = ''
-        }, 0)
 
-        // 隐藏换源加载状态
+          // 确保新集数加载完成后自动播放
+          if (artPlayerRef.current && artPlayerRef.current.paused) {
+            artPlayerRef.current.play().catch((err: any) => {
+              console.warn('自动播放失败:', err)
+            })
+          }
+        }, 100)
+
+        // 隐藏换源加载状态和切换集数加载状态
         setIsVideoLoading(false)
+        setIsEpisodeChanging(false)
       })
 
+    
       // 监听视频时间更新事件，实现跳过片头片尾
       artPlayerRef.current.on('video:timeupdate', () => {
         if (!skipConfigRef.current.enable)
@@ -1672,6 +1706,16 @@ function PlayPageClient() {
                   isLoading={isVideoLoading}
                   loadingStage={videoLoadingStage}
                 />
+
+                {/* 切换集数加载小指示器 */}
+                {isEpisodeChanging && (
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[250] pointer-events-none">
+                    <div className="bg-black/80 backdrop-blur-sm text-white px-4 py-3 rounded-full flex items-center gap-3 shadow-lg animate-pulse">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span className="text-sm font-medium">正在切换集数...</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
