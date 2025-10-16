@@ -1597,7 +1597,7 @@ function PlayPageClient() {
 
   return (
     <PageLayout activePath="/play">
-      <div className="flex flex-col gap-3 py-4 px-5 lg:px-[3rem] 2xl:px-20 pb-8">
+      <div className="flex flex-col gap-3 py-4 px-5 lg:px-[3rem] 2xl:px-20 pb-20 md:pb-8">
         {/* 第一行：影片标题 */}
         <div className="flex items-center gap-1 py-1">
           <BackButton />

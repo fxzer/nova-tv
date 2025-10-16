@@ -178,7 +178,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ className = '' }) => {
           )}
           <button
             type="submit"
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-500 hover:bg-green-600 text-white p-1.5 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+            className="absolute cursor-pointer right-2 top-1/2 transform -translate-y-1/2 bg-green-500 hover:bg-green-600 text-white p-1.5 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
           >
             <Search className="h-4 w-4" />
           </button>

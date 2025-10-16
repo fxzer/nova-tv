@@ -23,7 +23,7 @@ function PageLayout({
       {/* 主内容区域 */}
       <div className="relative">
         {/* 主内容 */}
-        <main className=" pt-16 pb-14 md:pb-0">{children}</main>
+        <main className="mt-16 pb-32 md:pb-0">{children}</main>
       </div>
 
       {/* 移动端底部导航 */}

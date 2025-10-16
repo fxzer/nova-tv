@@ -349,6 +349,8 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
               axis="y"
               values={availableSources}
               onReorder={() => {}}
+              as="div"
+              drag={false}
             >
               <AnimatePresence>
                 {availableSources
@@ -382,6 +384,7 @@ const SourceSelector: React.FC<SourceSelectorProps> = ({
                           ease: [0.4, 0, 0.2, 1],
                           layout: { duration: 0.4 },
                         }}
+                        drag={false}
                       >
                         <div
                           onClick={() =>

@@ -89,7 +89,7 @@ export default function PlayLoadingState({
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-transparent">
+    <div className="flex items-center justify-center h-[100dvh] bg-transparent ">
       <div className="text-center max-w-md mx-auto px-6">
         {/* 动画影院图标 */}
         <div className="relative mb-8">
