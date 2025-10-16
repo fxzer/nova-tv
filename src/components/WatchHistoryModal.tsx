@@ -107,7 +107,7 @@ export default function WatchHistoryModal({
         onClick={e => e.stopPropagation()}
       >
         {/* 标题栏 */}
-        <div className="flex items-center justify-between p-3 md:p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-2 md:p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             <Clock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">
@@ -124,7 +124,7 @@ export default function WatchHistoryModal({
         </div>
 
         {/* 内容区域 */}
-        <div className="flex-1 overflow-hidden p-3 md:p-6 flex flex-col">
+        <div className="flex-1 overflow-hidden p-2 md:p-6 flex flex-col">
           <div className="flex items-center justify-between mb-4 flex-shrink-0">
             <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
               最近观看
