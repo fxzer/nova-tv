@@ -1213,8 +1213,20 @@ function PlayPageClient() {
         fastForward: true,
         autoOrientation: true,
         lock: true,
+        // 移动端触摸优化配置
+        mobile: true,
+        allowDrag: true,
+        // 触摸事件优化
+        gestures: true,
+        // 进度条可拖拽
+        seekTime: 5,
         moreVideoAttr: {
           crossOrigin: 'anonymous',
+          // 移动端视频属性优化
+          'x5-playsinline': 'true',
+          'x5-video-player-type': 'h5',
+          'webkit-playsinline': 'true',
+          'playsinline': 'true',
         },
         // HLS 支持配置
         customType: {
@@ -1395,7 +1407,7 @@ function PlayPageClient() {
       artPlayerRef.current.on('ready', () => {
         setError(null)
 
-        // 注入自定义样式来覆盖设置按钮颜色
+        // 注入自定义样式来覆盖设置按钮颜色和优化移动端拖拽
         const styleId = 'artplayer-custom-theme'
         let styleElement = document.getElementById(styleId)
 
@@ -1403,6 +1415,7 @@ function PlayPageClient() {
           styleElement = document.createElement('style')
           styleElement.id = styleId
           styleElement.textContent = `
+            /* 设置按钮颜色 */
             .art-setting-item .art-icon-switchOn svg path {
               fill: #22c55e !important;
             }
@@ -1417,6 +1430,66 @@ function PlayPageClient() {
 
             .art-setting-item.active .art-setting-item-left-text {
               color: #22c55e !important;
+            }
+
+            /* 移动端进度条拖拽优化 */
+            .art-control-progress {
+              touch-action: manipulation !important;
+              pointer-events: auto !important;
+            }
+
+            .art-control-progress .art-control-progress-inner {
+              pointer-events: auto !important;
+              -webkit-user-select: none !important;
+              user-select: none !important;
+            }
+
+            .art-control-progress .art-control-progress-loaded,
+            .art-control-progress .art-control-progress-played {
+              pointer-events: none !important;
+            }
+
+            .art-control-progress .art-control-progress-thumb {
+              touch-action: none !important;
+              pointer-events: auto !important;
+              cursor: grab !important;
+              z-index: 10 !important;
+            }
+
+            .art-control-progress .art-control-progress-thumb:active {
+              cursor: grabbing !important;
+            }
+
+            /* 移动端触摸优化 */
+            @media (max-width: 768px) {
+              .art-control-progress {
+                height: 20px !important;
+                padding: 5px 0 !important;
+              }
+
+              .art-control-progress .art-control-progress-inner {
+                height: 4px !important;
+              }
+
+              .art-control-progress .art-control-progress-thumb {
+                width: 16px !important;
+                height: 16px !important;
+                transform: translate(-50%, -50%) scale(1.2) !important;
+              }
+            }
+
+            /* 确保进度条在所有层级之上 */
+            .art-control-progress {
+              z-index: 100 !important;
+              position: relative !important;
+            }
+
+            /* 解决安卓浏览器兼容性问题 */
+            @supports (-webkit-touch-callout: none) {
+              .art-control-progress .art-control-progress-thumb {
+                -webkit-transform: translate(-50%, -50%) scale(1.1) !important;
+                transform: translate(-50%, -50%) scale(1.1) !important;
+              }
             }
           `
           document.head.appendChild(styleElement)

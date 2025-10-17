@@ -15,10 +15,7 @@ export default function VideoGridContainer({
 }: VideoGridContainerProps) {
   return (
     <div
-      className={`justify-start grid grid-cols-3 gap-x-4 gap-y-4 px-0 sm:px-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 sm:gap-x-6 sm:gap-y-6 ${className}`}
-      style={{
-        gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-      }}
+      className={`justify-start grid grid-cols-2 gap-x-4 gap-y-4 px-0 sm:px-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 sm:gap-x-6 sm:gap-y-6 ${className}`}
     >
       {children}
     </div>
